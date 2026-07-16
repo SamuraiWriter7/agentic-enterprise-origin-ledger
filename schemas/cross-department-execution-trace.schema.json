@@ -1,0 +1,1070 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/agentic-enterprise-origin-ledger/schemas/cross-department-execution-trace.schema.json",
+  "title": "Cross-Department Execution Trace",
+  "description": "A record of how an AI-agent skill is invoked across enterprise departments, including data access, decisions, human interventions, policy checks, handoffs, outcomes, and preserved origin lineage.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "trace_id",
+    "created_at",
+    "execution_context",
+    "lineage",
+    "department_route",
+    "execution_steps",
+    "data_access_log",
+    "decisions",
+    "human_interventions",
+    "policy_evaluations",
+    "outcome",
+    "audit_summary",
+    "integrity",
+    "lifecycle"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.3.0"
+    },
+    "record_type": {
+      "type": "string",
+      "const": "cross_department_execution_trace"
+    },
+    "trace_id": {
+      "type": "string",
+      "pattern": "^cdet_[a-z0-9][a-z0-9._-]{7,127}$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "execution_context": {
+      "$ref": "#/$defs/executionContext"
+    },
+    "lineage": {
+      "$ref": "#/$defs/lineage"
+    },
+    "department_route": {
+      "$ref": "#/$defs/departmentRoute"
+    },
+    "execution_steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/executionStep"
+      }
+    },
+    "data_access_log": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dataAccess"
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/decision"
+      }
+    },
+    "human_interventions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/humanIntervention"
+      }
+    },
+    "policy_evaluations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/policyEvaluation"
+      }
+    },
+    "outcome": {
+      "$ref": "#/$defs/outcome"
+    },
+    "audit_summary": {
+      "$ref": "#/$defs/auditSummary"
+    },
+    "integrity": {
+      "$ref": "#/$defs/integrity"
+    },
+    "lifecycle": {
+      "$ref": "#/$defs/lifecycle"
+    },
+    "annotations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/annotation"
+      },
+      "default": []
+    }
+  },
+  "$defs": {
+    "actorReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actor_id",
+        "actor_type"
+      ],
+      "properties": {
+        "actor_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "actor_type": {
+          "type": "string",
+          "enum": [
+            "human",
+            "team",
+            "agent",
+            "system",
+            "organization"
+          ]
+        },
+        "display_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "digest"
+      ],
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "enum": [
+            "sha256",
+            "sha512",
+            "blake3"
+          ]
+        },
+        "digest": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 512
+        },
+        "signed_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      }
+    },
+    "executionContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "organization_id",
+        "environment",
+        "business_process_id",
+        "objective",
+        "initiating_department_id",
+        "initiated_by",
+        "trigger_type",
+        "started_at",
+        "correlation_id"
+      ],
+      "properties": {
+        "organization_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "environment": {
+          "type": "string",
+          "enum": [
+            "development",
+            "test",
+            "staging",
+            "production"
+          ]
+        },
+        "business_process_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "objective": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "initiating_department_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "initiated_by": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "trigger_type": {
+          "type": "string",
+          "enum": [
+            "scheduled",
+            "event",
+            "human_request",
+            "agent_request",
+            "incident",
+            "threshold",
+            "other"
+          ]
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "correlation_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "external_case_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "origin_record_id",
+        "origin_id",
+        "skill_binding_id",
+        "skill_id",
+        "skill_version",
+        "binding_integrity"
+      ],
+      "properties": {
+        "origin_record_id": {
+          "type": "string",
+          "pattern": "^ekor_[a-z0-9][a-z0-9._-]{7,127}$"
+        },
+        "origin_id": {
+          "type": "string",
+          "pattern": "^origin_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "skill_binding_id": {
+          "type": "string",
+          "pattern": "^kasb_[a-z0-9][a-z0-9._-]{7,127}$"
+        },
+        "skill_id": {
+          "type": "string",
+          "pattern": "^skill_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "skill_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$"
+        },
+        "binding_integrity": {
+          "$ref": "#/$defs/integrity"
+        }
+      }
+    },
+    "departmentRoute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "route_id",
+        "participants",
+        "handoffs"
+      ],
+      "properties": {
+        "route_id": {
+          "type": "string",
+          "pattern": "^route_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "participants": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/departmentParticipant"
+          }
+        },
+        "handoffs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/handoff"
+          }
+        }
+      }
+    },
+    "departmentParticipant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "department_id",
+        "department_name",
+        "role_in_execution",
+        "authority_scope"
+      ],
+      "properties": {
+        "department_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "department_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "role_in_execution": {
+          "type": "string",
+          "enum": [
+            "initiator",
+            "data_provider",
+            "analyst",
+            "reviewer",
+            "approver",
+            "executor",
+            "receiver",
+            "observer"
+          ]
+        },
+        "authority_scope": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        }
+      }
+    },
+    "handoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "handoff_id",
+        "from_department_id",
+        "to_department_id",
+        "transferred_at",
+        "payload_summary",
+        "reason",
+        "acceptance_status",
+        "restrictions_carried_forward"
+      ],
+      "properties": {
+        "handoff_id": {
+          "type": "string",
+          "pattern": "^handoff_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "from_department_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "to_department_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "transferred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "payload_summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "acceptance_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "accepted",
+            "rejected",
+            "returned"
+          ]
+        },
+        "accepted_by": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/actorReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "restrictions_carried_forward": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        }
+      }
+    },
+    "executionStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step_id",
+        "sequence",
+        "department_id",
+        "started_at",
+        "performed_by",
+        "step_type",
+        "description",
+        "skill_invoked",
+        "input_references",
+        "output_references",
+        "status"
+      ],
+      "properties": {
+        "step_id": {
+          "type": "string",
+          "pattern": "^step_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "department_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "performed_by": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "step_type": {
+          "type": "string",
+          "enum": [
+            "data_access",
+            "analysis",
+            "recommendation",
+            "human_review",
+            "approval",
+            "action",
+            "handoff",
+            "monitoring",
+            "other"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "skill_invoked": {
+          "type": "boolean"
+        },
+        "input_references": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "output_references": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "running",
+            "completed",
+            "failed",
+            "blocked",
+            "cancelled"
+          ]
+        },
+        "parent_step_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^step_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      }
+    },
+    "dataAccess": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "access_id",
+        "department_id",
+        "accessed_at",
+        "accessed_by",
+        "data_reference",
+        "purpose",
+        "classification",
+        "access_mode",
+        "authorized",
+        "policy_reference"
+      ],
+      "properties": {
+        "access_id": {
+          "type": "string",
+          "pattern": "^access_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "department_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "accessed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "accessed_by": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "data_reference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "classification": {
+          "type": "string",
+          "enum": [
+            "public",
+            "internal",
+            "confidential",
+            "restricted"
+          ]
+        },
+        "access_mode": {
+          "type": "string",
+          "enum": [
+            "read",
+            "write",
+            "derive"
+          ]
+        },
+        "authorized": {
+          "type": "boolean"
+        },
+        "policy_reference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "redaction_applied": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision_id",
+        "related_step_id",
+        "department_id",
+        "decided_at",
+        "decided_by",
+        "decision_type",
+        "decision",
+        "rationale",
+        "evidence_references",
+        "confidence",
+        "human_authority_status"
+      ],
+      "properties": {
+        "decision_id": {
+          "type": "string",
+          "pattern": "^decision_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "related_step_id": {
+          "type": "string",
+          "pattern": "^step_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "department_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "decided_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "decided_by": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "decision_type": {
+          "type": "string",
+          "enum": [
+            "classification",
+            "recommendation",
+            "approval",
+            "rejection",
+            "routing",
+            "operational_action",
+            "risk_assessment",
+            "other"
+          ]
+        },
+        "decision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000
+        },
+        "evidence_references": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "verified"
+          ]
+        },
+        "human_authority_status": {
+          "type": "string",
+          "enum": [
+            "not_required",
+            "pending",
+            "reviewed",
+            "approved",
+            "rejected"
+          ]
+        }
+      }
+    },
+    "humanIntervention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "intervention_id",
+        "related_step_id",
+        "intervened_at",
+        "actor",
+        "intervention_type",
+        "description",
+        "changed_agent_output"
+      ],
+      "properties": {
+        "intervention_id": {
+          "type": "string",
+          "pattern": "^intervention_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "related_step_id": {
+          "type": "string",
+          "pattern": "^step_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "intervened_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "actor": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "intervention_type": {
+          "type": "string",
+          "enum": [
+            "review",
+            "approval",
+            "rejection",
+            "override",
+            "correction",
+            "escalation",
+            "annotation"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "changed_agent_output": {
+          "type": "boolean"
+        },
+        "before_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        },
+        "after_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        }
+      }
+    },
+    "policyEvaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_check_id",
+        "checked_at",
+        "checked_by",
+        "policy_reference",
+        "related_step_id",
+        "result",
+        "blocking",
+        "notes"
+      ],
+      "properties": {
+        "policy_check_id": {
+          "type": "string",
+          "pattern": "^policycheck_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "checked_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "checked_by": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "policy_reference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "related_step_id": {
+          "type": "string",
+          "pattern": "^step_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "result": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "warning",
+            "not_applicable"
+          ]
+        },
+        "blocking": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "summary",
+        "business_effects",
+        "output_references",
+        "unresolved_issues",
+        "follow_up_required"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "successful",
+            "partially_successful",
+            "failed",
+            "cancelled",
+            "pending"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000
+        },
+        "business_effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/businessEffect"
+          }
+        },
+        "output_references": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "unresolved_issues": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "follow_up_required": {
+          "type": "boolean"
+        },
+        "follow_up_owner": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/actorReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "businessEffect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effect_type",
+        "description",
+        "measurement_status"
+      ],
+      "properties": {
+        "effect_type": {
+          "type": "string",
+          "enum": [
+            "time_saved",
+            "cost_avoided",
+            "risk_reduced",
+            "quality_improved",
+            "downtime_avoided",
+            "revenue_supported",
+            "compliance_supported",
+            "other"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "measurement_status": {
+          "type": "string",
+          "enum": [
+            "estimated",
+            "observed",
+            "verified",
+            "not_measured"
+          ]
+        },
+        "metric_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        }
+      }
+    },
+    "auditSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trace_complete",
+        "causality_complete",
+        "attribution_preserved",
+        "permissions_propagated",
+        "anomalies",
+        "review_status"
+      ],
+      "properties": {
+        "trace_complete": {
+          "type": "boolean"
+        },
+        "causality_complete": {
+          "type": "boolean"
+        },
+        "attribution_preserved": {
+          "type": "boolean",
+          "const": true
+        },
+        "permissions_propagated": {
+          "type": "boolean",
+          "const": true
+        },
+        "anomalies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "not_reviewed",
+            "in_review",
+            "accepted",
+            "rejected",
+            "revision_required"
+          ]
+        },
+        "reviewed_by": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/actorReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "review_notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "retention_policy"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "completed",
+            "suspended",
+            "invalidated",
+            "archived"
+          ]
+        },
+        "retention_policy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "superseded_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^cdet_[a-z0-9][a-z0-9._-]{7,127}$"
+        },
+        "invalidated_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      }
+    },
+    "annotation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "annotation_id",
+        "created_at",
+        "created_by",
+        "text"
+      ],
+      "properties": {
+        "annotation_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      }
+    }
+  }
+}
