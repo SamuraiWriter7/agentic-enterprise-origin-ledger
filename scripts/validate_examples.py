@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Validate Agentic Enterprise Origin Ledger example files.
+Validate Agentic Enterprise Origin Ledger examples.
 
 Dependencies:
     pip install jsonschema pyyaml
@@ -28,12 +28,21 @@ VALIDATION_TARGETS = [
         / "examples"
         / "enterprise-knowledge-origin-record.example.yaml",
         "Enterprise Knowledge Origin Record",
-    )
+    ),
+    (
+        ROOT_DIR
+        / "schemas"
+        / "knowledge-to-agent-skill-binding.schema.json",
+        ROOT_DIR
+        / "examples"
+        / "knowledge-to-agent-skill-binding.example.yaml",
+        "Knowledge-to-Agent Skill Binding",
+    ),
 ]
 
 
 def load_json(path: Path) -> dict[str, Any]:
-    """Load a JSON document from disk."""
+    """Load a JSON object from disk."""
     try:
         with path.open("r", encoding="utf-8") as file:
             data = json.load(file)
@@ -41,7 +50,8 @@ def load_json(path: Path) -> dict[str, Any]:
         raise RuntimeError(f"JSON file not found: {path}") from exc
     except json.JSONDecodeError as exc:
         raise RuntimeError(
-            f"Invalid JSON in {path}: line {exc.lineno}, column {exc.colno}"
+            f"Invalid JSON in {path}: "
+            f"line {exc.lineno}, column {exc.colno}"
         ) from exc
 
     if not isinstance(data, dict):
@@ -51,7 +61,7 @@ def load_json(path: Path) -> dict[str, Any]:
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
-    """Load a YAML document from disk."""
+    """Load a YAML mapping from disk."""
     try:
         with path.open("r", encoding="utf-8") as file:
             data = yaml.safe_load(file)
@@ -67,7 +77,7 @@ def load_yaml(path: Path) -> dict[str, Any]:
 
 
 def format_error_path(error: Any) -> str:
-    """Convert a jsonschema error path into a readable dotted path."""
+    """Convert a jsonschema path into readable dotted notation."""
     if not error.absolute_path:
         return "<root>"
 
@@ -90,7 +100,7 @@ def validate_document(
     example_path: Path,
     label: str,
 ) -> bool:
-    """Validate one example document against its schema."""
+    """Validate one YAML example against one JSON Schema."""
     print(f"[validate] {label}")
     print(f"  schema : {schema_path.relative_to(ROOT_DIR)}")
     print(f"  example: {example_path.relative_to(ROOT_DIR)}")
@@ -124,7 +134,7 @@ def validate_document(
 
 
 def main() -> int:
-    """Run validation for every registered schema/example pair."""
+    """Run every registered validation target."""
     print("=== Agentic Enterprise Origin Ledger Validation ===")
     print()
 
