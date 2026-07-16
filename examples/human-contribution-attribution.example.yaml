@@ -1,0 +1,922 @@
+schema_version: "0.4.0"
+record_type: human_contribution_attribution
+attribution_id: hca_spindle-anomaly-20260716-001
+created_at: "2026-07-16T11:15:00+09:00"
+
+attribution_scope:
+  organization_id: org_kazene-manufacturing
+  purpose: |-
+    Attribute human contributions that made the spindle-anomaly origin,
+    agent skill, cross-department execution, and controlled operational
+    outcome possible.
+  period:
+    start_at: "2018-04-01T00:00:00+09:00"
+    end_at: "2026-07-16T10:24:00+09:00"
+  outcome_scope:
+    - Human-approved spindle inspection at the next safe production transition.
+    - Temporary hold of the potentially affected production lot.
+    - Preservation of origin, attribution, and human authority across the workflow.
+  monetary_allocation_in_scope: false
+  decision_context: |-
+    This record prepares evidence-weighted contribution shares for later
+    value-return analysis. It does not determine pay, ownership, liability,
+    or royalty settlement.
+
+lineage:
+  origin_record_id: ekor_spindle-vibration-001
+  origin_id: origin_spindle-vibration-001
+  skill_binding_id: kasb_spindle-diagnosis-001
+  execution_trace_ids:
+    - cdet_spindle-anomaly-20260716-001
+  trace_integrities:
+    - trace_id: cdet_spindle-anomaly-20260716-001
+      integrity:
+        algorithm: sha256
+        digest: 1e675055eb4fcf1ea0b71e26c59a69d7486010f6bc8f70c0b725b195831ec0af
+        signed_by: enterprise-execution-trace-service
+  outcome_references:
+    - internal://maintenance/inspection-request/spindle-a17-001
+    - internal://quality/lot-hold/lot-20260716-L3-04
+    - internal://trace/spindle-a17/final-report-001
+
+methodology:
+  method_id: method_evidence-weighted-causal-v1
+  method_version: "1.0.0"
+  method_type: evidence_weighted_causal_attribution
+  normalization_basis: per_outcome
+  counterfactual_required: true
+  evidence_threshold: corroborated
+
+  dimensions:
+    - dimension_id: origin_novelty
+      weight: 0.2
+      description: >
+        Measures creation or discovery of the knowledge origin used by the
+        enterprise workflow.
+
+    - dimension_id: domain_expertise
+      weight: 0.15
+      description: >
+        Measures specialized expertise required to interpret the operational
+        context.
+
+    - dimension_id: contextual_judgment
+      weight: 0.2
+      description: >
+        Measures situation-specific judgment that could not be safely reduced
+        to a generic rule.
+
+    - dimension_id: corrective_action
+      weight: 0.15
+      description: >
+        Measures correction, override, or redirection of an agent or workflow
+        output.
+
+    - dimension_id: authorization_responsibility
+      weight: 0.15
+      description: >
+        Measures accountable authority exercised over consequential decisions.
+
+    - dimension_id: outcome_validation
+      weight: 0.1
+      description: >
+        Measures confirmation that the claimed outcome or effect is supported
+        by evidence.
+
+    - dimension_id: stewardship
+      weight: 0.05
+      description: >
+        Measures preservation, governance, review, and maintenance of reusable
+        enterprise knowledge.
+
+  rounding_precision: 2
+
+  limitations:
+    - >
+      Relative weights represent documented contribution to the scoped
+      outcome, not total employee value.
+    - >
+      Shared organizational infrastructure and incomplete historical evidence
+      remain partly unattributed.
+    - >
+      Counterfactual assessments are reviewable judgments rather than
+      experimentally proven causal estimates.
+    - >
+      The record must not be reused as a general employee ranking or
+      productivity score.
+
+human_contributors:
+  - contribution_id: contribution_technician-042
+    actor:
+      actor_id: employee_technician_042
+      actor_type: human
+      display_name: null
+    identity_visibility: pseudonymous
+    consent_status: confirmed
+    department_ids:
+      - precision-machining
+      - maintenance-engineering
+    roles:
+      - Senior machining technician
+      - Knowledge originator
+
+    contribution_events:
+      - event_id: cevent_origin-pattern-001
+        event_type: origin_creation
+        source_record_type: enterprise_knowledge_origin_record
+        source_record_id: ekor_spindle-vibration-001
+        source_element_id: origin_spindle-vibration-001
+        occurred_at: null
+        description: |-
+          Discovered the recurring relationship among vibration changes,
+          cutting-surface patterns, lubrication anomalies, and later
+          spindle-bearing failures.
+        effect_on_process: initiated
+        evidence_references:
+          - internal://knowledge-capture/interviews/spindle-2026-07-10
+          - internal://maintenance/history/spindle-failures-2018-2026
+
+      - event_id: cevent_evidence-review-001
+        event_type: evidence_provision
+        source_record_type: enterprise_knowledge_origin_record
+        source_record_id: ekor_spindle-vibration-001
+        source_element_id: evidence_interview-001
+        occurred_at: "2026-07-10T14:00:00+09:00"
+        description: >
+          Reviewed and confirmed that the captured explanation reflected the
+          actual diagnostic practice.
+        effect_on_process: validated
+        evidence_references:
+          - internal://knowledge-capture/interviews/spindle-2026-07-10
+
+    causal_assessment:
+      causal_role: necessary
+      counterfactual:
+        without_contribution_outcome: blocked
+        rationale: |-
+          Without the technician's original pattern recognition, the approved
+          diagnostic origin and downstream skill would not exist in the
+          recorded form.
+        confidence: high
+      causal_confidence: high
+      dependency_links: []
+
+    dimension_scores:
+      - dimension_id: origin_novelty
+        raw_score: 90
+        evidence_quality: high
+        rationale: >
+          Assessment for origin novelty is grounded in the cited contribution
+          events and source evidence.
+
+      - dimension_id: domain_expertise
+        raw_score: 95
+        evidence_quality: high
+        rationale: >
+          Assessment for domain expertise is grounded in the cited contribution
+          events and source evidence.
+
+      - dimension_id: contextual_judgment
+        raw_score: 70
+        evidence_quality: high
+        rationale: >
+          Assessment for contextual judgment is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: corrective_action
+        raw_score: 10
+        evidence_quality: medium
+        rationale: >
+          Assessment for corrective action is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: authorization_responsibility
+        raw_score: 10
+        evidence_quality: medium
+        rationale: >
+          Assessment for authorization responsibility is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: outcome_validation
+        raw_score: 30
+        evidence_quality: medium
+        rationale: >
+          Assessment for outcome validation is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: stewardship
+        raw_score: 55
+        evidence_quality: medium
+        rationale: >
+          Assessment for stewardship is grounded in the cited contribution
+          events and source evidence.
+
+    computed_attribution:
+      weighted_score: 55.0
+      relative_weight: 0.28
+      weight_status: confirmed
+      calculation_reference: internal://attribution/calculations/spindle-a17-v0.4
+      monetary_value_assigned: false
+
+    responsibility:
+      decision_authority: steward
+      risk_responsibility: medium
+      accountability_notes: |-
+        Origin responsibility remains attached to the reusable knowledge, but
+        the contributor did not authorize the operational case.
+
+    dispute:
+      status: none
+      raised_by: null
+      reason: null
+      resolution: null
+
+  - contribution_id: contribution_maintenance-engineer-118
+    actor:
+      actor_id: maintenance-engineer-118
+      actor_type: human
+      display_name: Authorized Maintenance Engineer
+    identity_visibility: named
+    consent_status: confirmed
+    department_ids:
+      - maintenance-engineering
+    roles:
+      - Authorized maintenance engineer
+      - Operational reviewer
+
+    contribution_events:
+      - event_id: cevent_domain-review-001
+        event_type: domain_review
+        source_record_type: cross_department_execution_trace
+        source_record_id: cdet_spindle-anomaly-20260716-001
+        source_element_id: step_maintenance-human-review
+        occurred_at: "2026-07-16T10:04:00+09:00"
+        description: |-
+          Verified the equipment model, calibration state, maintenance context,
+          and operational feasibility of the recommendation.
+        effect_on_process: enabled
+        evidence_references:
+          - internal://engineering/spindle-a17/equipment-configuration
+          - internal://maintenance/spindle-a17/history
+
+      - event_id: cevent_timing-correction-001
+        event_type: correction
+        source_record_type: cross_department_execution_trace
+        source_record_id: cdet_spindle-anomaly-20260716-001
+        source_element_id: intervention_adjust-inspection-timing-001
+        occurred_at: "2026-07-16T10:08:30+09:00"
+        description: |-
+          Changed the draft action from immediate interruption to a controlled
+          stop at the next safe production transition.
+        effect_on_process: corrected
+        evidence_references:
+          - internal://agent-output/spindle-a17/recommendation-001
+          - internal://maintenance/inspection-request/spindle-a17-001
+
+      - event_id: cevent_inspection-approval-001
+        event_type: approval
+        source_record_type: cross_department_execution_trace
+        source_record_id: cdet_spindle-anomaly-20260716-001
+        source_element_id: decision_maintenance-inspection-001
+        occurred_at: "2026-07-16T10:09:30+09:00"
+        description: |-
+          Accepted final authority for the inspection timing and the operating
+          restriction after the safe transition.
+        effect_on_process: authorized
+        evidence_references:
+          - internal://maintenance/inspection-request/spindle-a17-001
+
+    causal_assessment:
+      causal_role: mixed
+      counterfactual:
+        without_contribution_outcome: higher_risk
+        rationale: |-
+          Without the engineer's contextual correction and approval, the
+          workflow would either have interrupted production unnecessarily or
+          proceeded without accountable mechanical authority.
+        confidence: verified
+      causal_confidence: verified
+      dependency_links:
+        - contribution_technician-042
+
+    dimension_scores:
+      - dimension_id: origin_novelty
+        raw_score: 10
+        evidence_quality: medium
+        rationale: >
+          Assessment for origin novelty is grounded in the cited contribution
+          events and source evidence.
+
+      - dimension_id: domain_expertise
+        raw_score: 90
+        evidence_quality: verified
+        rationale: >
+          Assessment for domain expertise is grounded in the cited contribution
+          events and source evidence.
+
+      - dimension_id: contextual_judgment
+        raw_score: 95
+        evidence_quality: verified
+        rationale: >
+          Assessment for contextual judgment is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: corrective_action
+        raw_score: 95
+        evidence_quality: verified
+        rationale: >
+          Assessment for corrective action is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: authorization_responsibility
+        raw_score: 95
+        evidence_quality: verified
+        rationale: >
+          Assessment for authorization responsibility is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: outcome_validation
+        raw_score: 50
+        evidence_quality: medium
+        rationale: >
+          Assessment for outcome validation is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: stewardship
+        raw_score: 45
+        evidence_quality: medium
+        rationale: >
+          Assessment for stewardship is grounded in the cited contribution
+          events and source evidence.
+
+    computed_attribution:
+      weighted_score: 70.25
+      relative_weight: 0.27
+      weight_status: confirmed
+      calculation_reference: internal://attribution/calculations/spindle-a17-v0.4
+      monetary_value_assigned: false
+
+    responsibility:
+      decision_authority: approver
+      risk_responsibility: final_authority
+      accountability_notes: |-
+        The engineer held final authority for the maintenance decision and
+        accepted operational risk responsibility.
+
+    dispute:
+      status: none
+      raised_by: null
+      reason: null
+      resolution: null
+
+  - contribution_id: contribution_qa-supervisor-031
+    actor:
+      actor_id: qa-supervisor-031
+      actor_type: human
+      display_name: Quality Assurance Supervisor
+    identity_visibility: named
+    consent_status: confirmed
+    department_ids:
+      - quality-assurance
+    roles:
+      - Quality assurance supervisor
+      - Lot disposition approver
+
+    contribution_events:
+      - event_id: cevent_quality-approval-001
+        event_type: approval
+        source_record_type: cross_department_execution_trace
+        source_record_id: cdet_spindle-anomaly-20260716-001
+        source_element_id: decision_quality-lot-hold-001
+        occurred_at: "2026-07-16T10:21:30+09:00"
+        description: >
+          Authorized the temporary lot hold after reviewing the quality
+          evidence and anomaly interval.
+        effect_on_process: authorized
+        evidence_references:
+          - internal://quality/review/spindle-a17-impact-draft-001
+          - internal://quality/lot/lot-20260716-L3-04
+
+      - event_id: cevent_quality-validation-001
+        event_type: outcome_verification
+        source_record_type: cross_department_execution_trace
+        source_record_id: cdet_spindle-anomaly-20260716-001
+        source_element_id: intervention_approve-lot-hold-001
+        occurred_at: "2026-07-16T10:21:30+09:00"
+        description: |-
+          Confirmed that the proposed hold was limited to the affected lot and
+          did not exceed the available evidence.
+        effect_on_process: validated
+        evidence_references:
+          - internal://quality/lot-hold/lot-20260716-L3-04
+
+    causal_assessment:
+      causal_role: authorizing
+      counterfactual:
+        without_contribution_outcome: higher_risk
+        rationale: |-
+          Without the supervisor's review, the affected lot could not have
+          been lawfully or operationally held by the advisory workflow.
+        confidence: high
+      causal_confidence: high
+      dependency_links:
+        - contribution_maintenance-engineer-118
+
+    dimension_scores:
+      - dimension_id: origin_novelty
+        raw_score: 5
+        evidence_quality: medium
+        rationale: >
+          Assessment for origin novelty is grounded in the cited contribution
+          events and source evidence.
+
+      - dimension_id: domain_expertise
+        raw_score: 75
+        evidence_quality: high
+        rationale: >
+          Assessment for domain expertise is grounded in the cited contribution
+          events and source evidence.
+
+      - dimension_id: contextual_judgment
+        raw_score: 85
+        evidence_quality: high
+        rationale: >
+          Assessment for contextual judgment is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: corrective_action
+        raw_score: 25
+        evidence_quality: medium
+        rationale: >
+          Assessment for corrective action is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: authorization_responsibility
+        raw_score: 95
+        evidence_quality: high
+        rationale: >
+          Assessment for authorization responsibility is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: outcome_validation
+        raw_score: 85
+        evidence_quality: high
+        rationale: >
+          Assessment for outcome validation is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: stewardship
+        raw_score: 35
+        evidence_quality: medium
+        rationale: >
+          Assessment for stewardship is grounded in the cited contribution
+          events and source evidence.
+
+    computed_attribution:
+      weighted_score: 57.5
+      relative_weight: 0.16
+      weight_status: confirmed
+      calculation_reference: internal://attribution/calculations/spindle-a17-v0.4
+      monetary_value_assigned: false
+
+    responsibility:
+      decision_authority: approver
+      risk_responsibility: final_authority
+      accountability_notes: >
+        The supervisor held final authority for lot disposition within the
+        recorded quality scope.
+
+    dispute:
+      status: none
+      raised_by: null
+      reason: null
+      resolution: null
+
+  - contribution_id: contribution_knowledge-engineering-team
+    actor:
+      actor_id: knowledge-engineering-team
+      actor_type: human_team
+      display_name: Enterprise Knowledge Engineering Team
+    identity_visibility: named
+    consent_status: not_required
+    department_ids:
+      - enterprise-knowledge-engineering
+    roles:
+      - Knowledge engineering team
+      - Skill transformation reviewer
+
+    contribution_events:
+      - event_id: cevent_capture-origin-001
+        event_type: knowledge_capture
+        source_record_type: enterprise_knowledge_origin_record
+        source_record_id: ekor_spindle-vibration-001
+        source_element_id: capture_spindle-vibration-001
+        occurred_at: "2026-07-10T14:00:00+09:00"
+        description: |-
+          Captured the technician's tacit practice, its limitations, and
+          supporting evidence in a structured origin record.
+        effect_on_process: enabled
+        evidence_references:
+          - internal://knowledge-capture/interviews/spindle-2026-07-10
+
+      - event_id: cevent_skill-transformation-001
+        event_type: skill_transformation
+        source_record_type: knowledge_to_agent_skill_binding
+        source_record_id: kasb_spindle-diagnosis-001
+        source_element_id: transform_spindle-skill-001
+        occurred_at: "2026-07-16T09:40:00+09:00"
+        description: |-
+          Converted the approved origin into a controlled advisory skill while
+          preserving attribution and human-review requirements.
+        effect_on_process: enabled
+        evidence_references:
+          - internal://validation/spindle-skill/test-known-pattern
+          - internal://policies/enterprise-knowledge-use-policy-v1
+
+      - event_id: cevent_lineage-stewardship-001
+        event_type: stewardship
+        source_record_type: cross_department_execution_trace
+        source_record_id: cdet_spindle-anomaly-20260716-001
+        source_element_id: policycheck_origin-lineage-001
+        occurred_at: "2026-07-16T10:03:00+09:00"
+        description: >
+          Maintained the link among the origin record, skill binding, and
+          runtime trace.
+        effect_on_process: constrained
+        evidence_references:
+          - origin_spindle-vibration-001
+          - kasb_spindle-diagnosis-001
+
+    causal_assessment:
+      causal_role: enabling
+      counterfactual:
+        without_contribution_outcome: delayed
+        rationale: |-
+          Without structured capture and binding, the expertise would remain
+          local and the cross-department agent workflow could not be deployed
+          with auditable constraints.
+        confidence: high
+      causal_confidence: high
+      dependency_links:
+        - contribution_technician-042
+
+    dimension_scores:
+      - dimension_id: origin_novelty
+        raw_score: 35
+        evidence_quality: medium
+        rationale: >
+          Assessment for origin novelty is grounded in the cited contribution
+          events and source evidence.
+
+      - dimension_id: domain_expertise
+        raw_score: 65
+        evidence_quality: high
+        rationale: >
+          Assessment for domain expertise is grounded in the cited contribution
+          events and source evidence.
+
+      - dimension_id: contextual_judgment
+        raw_score: 55
+        evidence_quality: medium
+        rationale: >
+          Assessment for contextual judgment is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: corrective_action
+        raw_score: 20
+        evidence_quality: medium
+        rationale: >
+          Assessment for corrective action is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: authorization_responsibility
+        raw_score: 20
+        evidence_quality: medium
+        rationale: >
+          Assessment for authorization responsibility is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: outcome_validation
+        raw_score: 45
+        evidence_quality: medium
+        rationale: >
+          Assessment for outcome validation is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: stewardship
+        raw_score: 95
+        evidence_quality: high
+        rationale: >
+          Assessment for stewardship is grounded in the cited contribution
+          events and source evidence.
+
+    computed_attribution:
+      weighted_score: 43.0
+      relative_weight: 0.13
+      weight_status: confirmed
+      calculation_reference: internal://attribution/calculations/spindle-a17-v0.4
+      monetary_value_assigned: false
+
+    responsibility:
+      decision_authority: steward
+      risk_responsibility: medium
+      accountability_notes: |-
+        The team is responsible for faithful transformation and lineage
+        maintenance, not for final operational authorization.
+
+    dispute:
+      status: none
+      raised_by: null
+      reason: null
+      resolution: null
+
+  - contribution_id: contribution_predictive-maintenance-team
+    actor:
+      actor_id: team_predictive-maintenance
+      actor_type: human_team
+      display_name: Predictive Maintenance Team
+    identity_visibility: named
+    consent_status: not_required
+    department_ids:
+      - maintenance-engineering
+    roles:
+      - Predictive maintenance analysis team
+      - Evidence reviewer
+
+    contribution_events:
+      - event_id: cevent_historical-corroboration-001
+        event_type: evidence_provision
+        source_record_type: enterprise_knowledge_origin_record
+        source_record_id: ekor_spindle-vibration-001
+        source_element_id: evidence_maintenance-log-001
+        occurred_at: "2026-07-11T10:00:00+09:00"
+        description: |-
+          Compared the technician's observations with historical maintenance
+          events and vibration measurements.
+        effect_on_process: validated
+        evidence_references:
+          - internal://maintenance/history/spindle-failures-2018-2026
+          - internal://engineering/vibration-analysis/report-2026-0712
+
+    causal_assessment:
+      causal_role: validating
+      counterfactual:
+        without_contribution_outcome: degraded
+        rationale: |-
+          Without historical corroboration, the origin could still be captured
+          but would have weaker evidence and lower deployment confidence.
+        confidence: high
+      causal_confidence: high
+      dependency_links:
+        - contribution_technician-042
+
+    dimension_scores:
+      - dimension_id: origin_novelty
+        raw_score: 10
+        evidence_quality: medium
+        rationale: >
+          Assessment for origin novelty is grounded in the cited contribution
+          events and source evidence.
+
+      - dimension_id: domain_expertise
+        raw_score: 75
+        evidence_quality: high
+        rationale: >
+          Assessment for domain expertise is grounded in the cited contribution
+          events and source evidence.
+
+      - dimension_id: contextual_judgment
+        raw_score: 45
+        evidence_quality: medium
+        rationale: >
+          Assessment for contextual judgment is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: corrective_action
+        raw_score: 10
+        evidence_quality: medium
+        rationale: >
+          Assessment for corrective action is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: authorization_responsibility
+        raw_score: 5
+        evidence_quality: medium
+        rationale: >
+          Assessment for authorization responsibility is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: outcome_validation
+        raw_score: 90
+        evidence_quality: high
+        rationale: >
+          Assessment for outcome validation is grounded in the cited
+          contribution events and source evidence.
+
+      - dimension_id: stewardship
+        raw_score: 40
+        evidence_quality: medium
+        rationale: >
+          Assessment for stewardship is grounded in the cited contribution
+          events and source evidence.
+
+    computed_attribution:
+      weighted_score: 35.5
+      relative_weight: 0.08
+      weight_status: confirmed
+      calculation_reference: internal://attribution/calculations/spindle-a17-v0.4
+      monetary_value_assigned: false
+
+    responsibility:
+      decision_authority: reviewer
+      risk_responsibility: low
+      accountability_notes: |-
+        The team strengthened evidentiary confidence but did not hold final
+        authority for the recorded execution.
+
+    dispute:
+      status: none
+      raised_by: null
+      reason: null
+      resolution: null
+
+non_human_support:
+  - support_id: support_sensor-monitoring-system
+    actor:
+      actor_id: sensor-monitoring-system
+      actor_type: system
+      display_name: Plant A Sensor Monitoring System
+    support_role: data_collection
+    related_element_ids:
+      - step_collect-alert-context
+      - access_vibration-event-001
+    influence_level: critical
+    excluded_from_human_attribution: true
+    notes: |-
+      Generated the triggering signal and context package but did not create
+      human knowledge or hold decision authority.
+
+  - support_id: support_predictive-maintenance-agent
+    actor:
+      actor_id: agent_predictive-maintenance-01
+      actor_type: agent
+      display_name: Predictive Maintenance Support Agent
+    support_role: recommendation
+    related_element_ids:
+      - step_run-anomaly-triage
+      - decision_agent-urgent-inspection-001
+    influence_level: high
+    excluded_from_human_attribution: true
+    notes: |-
+      Applied the approved skill and produced an advisory recommendation.
+      Its output depended on the human-originated knowledge and remained
+      subject to human review.
+
+  - support_id: support_quality-review-agent
+    actor:
+      actor_id: qa-review-agent-02
+      actor_type: agent
+      display_name: Quality Review Support Agent
+    support_role: analysis
+    related_element_ids:
+      - step_quality-impact-review
+    influence_level: medium
+    excluded_from_human_attribution: true
+    notes: >
+      Prepared the quality-impact draft but did not authorize the lot hold.
+
+  - support_id: support_policy-engine
+    actor:
+      actor_id: enterprise-agent-policy-engine
+      actor_type: system
+      display_name: Enterprise Agent Policy Engine
+    support_role: policy_enforcement
+    related_element_ids:
+      - policycheck_agent-advisory-boundary-001
+      - policycheck_quality-data-scope-001
+    influence_level: high
+    excluded_from_human_attribution: true
+    notes: |-
+      Enforced advisory and data-scope boundaries. System support is recorded
+      separately so it is not misrepresented as human contribution.
+
+aggregate_attribution:
+  basis: |-
+    Confirmed human relative weights plus explicitly unattributed shared
+    organizational contribution are normalized to 1.0 for the scoped outcomes.
+  total_relative_weight: 1.0
+  unattributed_weight: 0.08
+  human_contribution_complete: false
+  calculation_status: reviewed
+  allocation_readiness: provisional
+
+  checks:
+    - check_type: dimension_weights
+      result: pass
+      notes: Methodology dimension weights sum to 1.0.
+
+    - check_type: relative_weights
+      result: pass
+      notes: >
+        Confirmed human relative weights sum to 0.92; with 0.08 unattributed
+        weight, the total is 1.0.
+
+    - check_type: evidence_coverage
+      result: pass
+      notes: >
+        Every contribution event references an origin, binding, trace, or
+        supporting evidence item.
+
+    - check_type: causal_consistency
+      result: pass
+      notes: >
+        Counterfactual claims are consistent with the recorded execution route
+        and authority boundaries.
+
+    - check_type: duplicate_claims
+      result: warning
+      notes: |-
+        Origin discovery and evidence corroboration are interdependent; shares
+        were separated by causal role rather than treated as duplicate
+        ownership.
+
+    - check_type: permission_compliance
+      result: pass
+      notes: >
+        Attribution respects pseudonymization and the origin record's
+        contributor permissions.
+
+    - check_type: open_disputes
+      result: pass
+      notes: No contribution dispute is open.
+
+    - check_type: identity_protection
+      result: pass
+      notes: The individual originator remains pseudonymous in routine records.
+
+governance:
+  review_required: true
+  review_status: accepted
+
+  reviewers:
+    - actor_id: ai-governance-office
+      actor_type: human_team
+      display_name: AI Governance Office
+
+    - actor_id: enterprise-value-analysis-team
+      actor_type: human_team
+      display_name: Enterprise Value Analysis Team
+
+    - actor_id: worker-representation-reviewer
+      actor_type: human
+      display_name: Worker Representation Reviewer
+
+  methodology_transparency: |-
+    Contributors may inspect the dimension weights, source evidence,
+    counterfactual reasoning, weighted score, and relative-weight calculation
+    used for their attribution.
+
+  identity_protection: |-
+    Pseudonymous and withheld identities are separated from normal
+    agent-visible records. Access to identity mappings requires an approved
+    attribution-review purpose.
+
+  appeal_available: true
+
+  prohibited_uses:
+    - General employee performance ranking.
+    - Automated disciplinary or termination decisions.
+    - Determination of legal ownership or liability without separate review.
+    - Monetary distribution before a v0.5 value-return record is approved.
+    - Conversion of an agent or system support role into a fictitious human contributor.
+    - Removal of the origin contributor because later operational actors were more visible.
+
+  reviewed_at: "2026-07-16T11:10:00+09:00"
+  review_notes: |-
+    Accepted as a provisional attribution record. Value-return calculation
+    remains blocked until the business effects and inspection outcome are
+    verified.
+
+integrity:
+  algorithm: sha256
+  digest: 5d8742554265e55dfa599c248d191f9caa03efe7f7089666142da0d393d54b91
+  signed_by: enterprise-contribution-attribution-service
+
+lifecycle:
+  status: approved
+  retention_policy: |-
+    Retain with the linked origin, skill binding, execution trace, evidence,
+    reviews, and any future value-return ledger for at least seven years.
+  superseded_by: null
+  invalidated_reason: null
+
+annotations:
+  - annotation_id: annotation_value-return-gate-001
+    created_at: "2026-07-16T11:12:00+09:00"
+    created_by:
+      actor_id: enterprise-value-analysis-team
+      actor_type: human_team
+      display_name: Enterprise Value Analysis Team
+    text: |-
+      v0.5 may consume this record only after allocation_readiness becomes
+      ready and the estimated downtime effect is independently verified.
