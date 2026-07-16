@@ -1,0 +1,491 @@
+schema_version: "0.3.0"
+record_type: cross_department_execution_trace
+trace_id: cdet_spindle-anomaly-20260716-001
+created_at: "2026-07-16T10:25:00+09:00"
+
+execution_context:
+  organization_id: org_kazene-manufacturing
+  environment: production
+  business_process_id: process_predictive-maintenance-triage
+  objective: >
+    Evaluate a possible spindle-bearing anomaly, coordinate review across
+    production, maintenance, and quality assurance, and schedule a controlled
+    inspection without permitting autonomous equipment shutdown.
+  initiating_department_id: production-operations
+  initiated_by:
+    actor_id: sensor-monitoring-system
+    actor_type: system
+    display_name: Plant A Sensor Monitoring System
+  trigger_type: threshold
+  started_at: "2026-07-16T09:58:00+09:00"
+  completed_at: "2026-07-16T10:22:00+09:00"
+  correlation_id: corr_spindle-a17_20260716_0958
+  external_case_reference: internal://cases/maintenance/spindle-a17-20260716
+
+lineage:
+  origin_record_id: ekor_spindle-vibration-001
+  origin_id: origin_spindle-vibration-001
+  skill_binding_id: kasb_spindle-diagnosis-001
+  skill_id: skill_spindle-anomaly-triage
+  skill_version: "0.1.0"
+  binding_integrity:
+    algorithm: sha256
+    digest: "c25f4367f68cf6dd4e323c09a4d62c04b59047cc8ce4ba5d573703bde6929fb1"
+    signed_by: enterprise-knowledge-ledger-service
+
+department_route:
+  route_id: route_spindle-anomaly-001
+
+  participants:
+    - department_id: production-operations
+      department_name: Production Operations
+      role_in_execution: initiator
+      authority_scope:
+        - Report abnormal equipment conditions.
+        - Continue or pause production only through authorized human decisions.
+
+    - department_id: maintenance-engineering
+      department_name: Maintenance Engineering
+      role_in_execution: reviewer
+      authority_scope:
+        - Review predictive-maintenance recommendations.
+        - Approve and schedule mechanical inspections.
+        - Reject recommendations that lack sufficient evidence.
+
+    - department_id: quality-assurance
+      department_name: Quality Assurance
+      role_in_execution: data_provider
+      authority_scope:
+        - Review recent product-quality observations.
+        - Place affected lots on hold through authorized human approval.
+
+  handoffs:
+    - handoff_id: handoff_production-to-maintenance-001
+      from_department_id: production-operations
+      to_department_id: maintenance-engineering
+      transferred_at: "2026-07-16T10:03:30+09:00"
+      payload_summary: >
+        Urgent inspection recommendation, supporting vibration features,
+        lubrication anomaly, cutting-surface observation, and origin trace.
+      reason: >
+        The agent recommendation required authorized maintenance review before
+        any operational action.
+      acceptance_status: accepted
+      accepted_by:
+        actor_id: maintenance-engineer-118
+        actor_type: human
+        display_name: Authorized Maintenance Engineer
+      restrictions_carried_forward:
+        - Advisory output only.
+        - Autonomous equipment shutdown is prohibited.
+        - Contributor and origin references must be retained.
+        - Sensor calibration and equipment scope must be confirmed.
+
+    - handoff_id: handoff_maintenance-to-quality-001
+      from_department_id: maintenance-engineering
+      to_department_id: quality-assurance
+      transferred_at: "2026-07-16T10:11:00+09:00"
+      payload_summary: >
+        Approved inspection request and request for review of parts produced
+        since the first detected vibration anomaly.
+      reason: >
+        Quality assurance evidence was required to determine whether recent
+        production lots needed a temporary hold.
+      acceptance_status: accepted
+      accepted_by:
+        actor_id: qa-supervisor-031
+        actor_type: human
+        display_name: Quality Assurance Supervisor
+      restrictions_carried_forward:
+        - Use only for the affected machine and production interval.
+        - Do not infer employee performance from the event.
+        - Retain the original knowledge and skill lineage.
+        - Human approval is required for any lot hold.
+
+execution_steps:
+  - step_id: step_collect-alert-context
+    sequence: 1
+    department_id: production-operations
+    started_at: "2026-07-16T09:58:00+09:00"
+    completed_at: "2026-07-16T10:00:00+09:00"
+    performed_by:
+      actor_id: sensor-monitoring-system
+      actor_type: system
+      display_name: Plant A Sensor Monitoring System
+    step_type: data_access
+    description: >
+      Collected the abnormal vibration event, current sensor calibration
+      status, machine identity, and recent operating context.
+    skill_invoked: false
+    input_references:
+      - internal://sensors/spindle-a17/event-20260716-0958
+      - internal://sensors/spindle-a17/calibration-current
+    output_references:
+      - internal://trace/spindle-a17/context-package-001
+    status: completed
+    parent_step_id: null
+    notes: null
+
+  - step_id: step_run-anomaly-triage
+    sequence: 2
+    department_id: production-operations
+    started_at: "2026-07-16T10:00:00+09:00"
+    completed_at: "2026-07-16T10:03:00+09:00"
+    performed_by:
+      actor_id: agent_predictive-maintenance-01
+      actor_type: agent
+      display_name: Predictive Maintenance Support Agent
+    step_type: recommendation
+    description: >
+      Invoked the approved spindle-anomaly triage skill and generated an
+      urgent human-inspection recommendation with supporting evidence and
+      uncertainty.
+    skill_invoked: true
+    input_references:
+      - internal://trace/spindle-a17/context-package-001
+      - internal://maintenance/spindle-a17/lubrication-last-30-days
+      - internal://production/spindle-a17/cutting-surface-observation-074
+    output_references:
+      - internal://agent-output/spindle-a17/recommendation-001
+      - origin_spindle-vibration-001
+    status: completed
+    parent_step_id: step_collect-alert-context
+    notes: >
+      The output remained advisory and contained the mandatory origin trace.
+
+  - step_id: step_maintenance-human-review
+    sequence: 3
+    department_id: maintenance-engineering
+    started_at: "2026-07-16T10:04:00+09:00"
+    completed_at: "2026-07-16T10:10:00+09:00"
+    performed_by:
+      actor_id: maintenance-engineer-118
+      actor_type: human
+      display_name: Authorized Maintenance Engineer
+    step_type: human_review
+    description: >
+      Reviewed the agent recommendation, verified the equipment model and
+      calibration status, and approved a controlled inspection at the next
+      safe production transition.
+    skill_invoked: false
+    input_references:
+      - internal://agent-output/spindle-a17/recommendation-001
+      - internal://maintenance/spindle-a17/history
+      - internal://engineering/spindle-a17/equipment-configuration
+    output_references:
+      - internal://maintenance/inspection-request/spindle-a17-001
+    status: completed
+    parent_step_id: step_run-anomaly-triage
+    notes: >
+      The reviewer changed the proposed timing from immediate interruption to
+      the next safe production transition after checking current process risk.
+
+  - step_id: step_quality-impact-review
+    sequence: 4
+    department_id: quality-assurance
+    started_at: "2026-07-16T10:11:30+09:00"
+    completed_at: "2026-07-16T10:18:00+09:00"
+    performed_by:
+      actor_id: qa-review-agent-02
+      actor_type: agent
+      display_name: Quality Review Support Agent
+    step_type: analysis
+    description: >
+      Compared recent product-quality measurements with the anomaly interval
+      and drafted a recommendation for human quality review.
+    skill_invoked: false
+    input_references:
+      - internal://quality/measurements/line-3/20260716-0800-1011
+      - internal://maintenance/inspection-request/spindle-a17-001
+    output_references:
+      - internal://quality/review/spindle-a17-impact-draft-001
+    status: completed
+    parent_step_id: step_maintenance-human-review
+    notes: >
+      No restricted contributor identity was exposed to the quality agent.
+
+  - step_id: step_authorize-lot-hold
+    sequence: 5
+    department_id: quality-assurance
+    started_at: "2026-07-16T10:18:30+09:00"
+    completed_at: "2026-07-16T10:22:00+09:00"
+    performed_by:
+      actor_id: qa-supervisor-031
+      actor_type: human
+      display_name: Quality Assurance Supervisor
+    step_type: approval
+    description: >
+      Approved a temporary hold on one affected production lot pending
+      mechanical inspection and dimensional remeasurement.
+    skill_invoked: false
+    input_references:
+      - internal://quality/review/spindle-a17-impact-draft-001
+      - internal://quality/lot/lot-20260716-L3-04
+    output_references:
+      - internal://quality/lot-hold/lot-20260716-L3-04
+    status: completed
+    parent_step_id: step_quality-impact-review
+    notes: null
+
+data_access_log:
+  - access_id: access_vibration-event-001
+    department_id: production-operations
+    accessed_at: "2026-07-16T09:58:10+09:00"
+    accessed_by:
+      actor_id: sensor-monitoring-system
+      actor_type: system
+      display_name: Plant A Sensor Monitoring System
+    data_reference: internal://sensors/spindle-a17/event-20260716-0958
+    purpose: Create the anomaly execution context.
+    classification: confidential
+    access_mode: read
+    authorized: true
+    policy_reference: internal://policies/plant-sensor-data-access-v2
+    redaction_applied: false
+
+  - access_id: access_maintenance-history-001
+    department_id: production-operations
+    accessed_at: "2026-07-16T10:00:20+09:00"
+    accessed_by:
+      actor_id: agent_predictive-maintenance-01
+      actor_type: agent
+      display_name: Predictive Maintenance Support Agent
+    data_reference: internal://maintenance/spindle-a17/lubrication-last-30-days
+    purpose: Evaluate approved spindle-anomaly indicators.
+    classification: confidential
+    access_mode: read
+    authorized: true
+    policy_reference: internal://policies/predictive-maintenance-agent-access-v1
+    redaction_applied: true
+
+  - access_id: access_quality-measurements-001
+    department_id: quality-assurance
+    accessed_at: "2026-07-16T10:12:00+09:00"
+    accessed_by:
+      actor_id: qa-review-agent-02
+      actor_type: agent
+      display_name: Quality Review Support Agent
+    data_reference: internal://quality/measurements/line-3/20260716-0800-1011
+    purpose: Assess possible product-quality impact during the anomaly interval.
+    classification: confidential
+    access_mode: read
+    authorized: true
+    policy_reference: internal://policies/quality-agent-data-access-v1
+    redaction_applied: true
+
+decisions:
+  - decision_id: decision_agent-urgent-inspection-001
+    related_step_id: step_run-anomaly-triage
+    department_id: production-operations
+    decided_at: "2026-07-16T10:02:50+09:00"
+    decided_by:
+      actor_id: agent_predictive-maintenance-01
+      actor_type: agent
+      display_name: Predictive Maintenance Support Agent
+    decision_type: recommendation
+    decision: Recommend urgent authorized mechanical inspection.
+    rationale: >
+      High-frequency vibration increase, irregular cutting marks, and a recent
+      lubrication anomaly jointly matched the approved knowledge origin.
+    evidence_references:
+      - internal://sensors/spindle-a17/event-20260716-0958
+      - internal://maintenance/spindle-a17/lubrication-last-30-days
+      - internal://production/spindle-a17/cutting-surface-observation-074
+      - origin_spindle-vibration-001
+    confidence: high
+    human_authority_status: pending
+
+  - decision_id: decision_maintenance-inspection-001
+    related_step_id: step_maintenance-human-review
+    department_id: maintenance-engineering
+    decided_at: "2026-07-16T10:09:30+09:00"
+    decided_by:
+      actor_id: maintenance-engineer-118
+      actor_type: human
+      display_name: Authorized Maintenance Engineer
+    decision_type: approval
+    decision: >
+      Approve inspection at the next safe production transition and prohibit
+      continued operation after that transition until inspection is complete.
+    rationale: >
+      Evidence justified prompt inspection, while the current process state
+      allowed a controlled transition without an emergency stop.
+    evidence_references:
+      - internal://agent-output/spindle-a17/recommendation-001
+      - internal://engineering/spindle-a17/equipment-configuration
+    confidence: verified
+    human_authority_status: approved
+
+  - decision_id: decision_quality-lot-hold-001
+    related_step_id: step_authorize-lot-hold
+    department_id: quality-assurance
+    decided_at: "2026-07-16T10:21:30+09:00"
+    decided_by:
+      actor_id: qa-supervisor-031
+      actor_type: human
+      display_name: Quality Assurance Supervisor
+    decision_type: operational_action
+    decision: Temporarily hold lot-20260716-L3-04 for remeasurement.
+    rationale: >
+      A small dimensional shift overlapped the anomaly interval and required
+      confirmation before release.
+    evidence_references:
+      - internal://quality/review/spindle-a17-impact-draft-001
+      - internal://quality/lot/lot-20260716-L3-04
+    confidence: high
+    human_authority_status: approved
+
+human_interventions:
+  - intervention_id: intervention_adjust-inspection-timing-001
+    related_step_id: step_maintenance-human-review
+    intervened_at: "2026-07-16T10:08:30+09:00"
+    actor:
+      actor_id: maintenance-engineer-118
+      actor_type: human
+      display_name: Authorized Maintenance Engineer
+    intervention_type: correction
+    description: >
+      Changed the draft action from immediate production interruption to a
+      controlled stop at the next safe transition, while preserving urgent
+      inspection priority.
+    changed_agent_output: true
+    before_reference: internal://agent-output/spindle-a17/recommendation-001
+    after_reference: internal://maintenance/inspection-request/spindle-a17-001
+
+  - intervention_id: intervention_approve-lot-hold-001
+    related_step_id: step_authorize-lot-hold
+    intervened_at: "2026-07-16T10:21:30+09:00"
+    actor:
+      actor_id: qa-supervisor-031
+      actor_type: human
+      display_name: Quality Assurance Supervisor
+    intervention_type: approval
+    description: Approved the temporary lot hold proposed by the review workflow.
+    changed_agent_output: false
+    before_reference: internal://quality/review/spindle-a17-impact-draft-001
+    after_reference: internal://quality/lot-hold/lot-20260716-L3-04
+
+policy_evaluations:
+  - policy_check_id: policycheck_agent-advisory-boundary-001
+    checked_at: "2026-07-16T10:02:55+09:00"
+    checked_by:
+      actor_id: enterprise-agent-policy-engine
+      actor_type: system
+      display_name: Enterprise Agent Policy Engine
+    policy_reference: internal://policies/predictive-maintenance-human-review-v2
+    related_step_id: step_run-anomaly-triage
+    result: pass
+    blocking: true
+    notes: >
+      The agent produced a recommendation only and did not issue an equipment
+      control command.
+
+  - policy_check_id: policycheck_origin-lineage-001
+    checked_at: "2026-07-16T10:03:00+09:00"
+    checked_by:
+      actor_id: enterprise-knowledge-ledger-service
+      actor_type: system
+      display_name: Enterprise Knowledge Ledger Service
+    policy_reference: internal://policies/enterprise-knowledge-use-policy-v1
+    related_step_id: step_run-anomaly-triage
+    result: pass
+    blocking: true
+    notes: >
+      The origin record, skill binding, and attribution references were present
+      and matched the approved integrity record.
+
+  - policy_check_id: policycheck_quality-data-scope-001
+    checked_at: "2026-07-16T10:12:05+09:00"
+    checked_by:
+      actor_id: enterprise-agent-policy-engine
+      actor_type: system
+      display_name: Enterprise Agent Policy Engine
+    policy_reference: internal://policies/quality-agent-data-access-v1
+    related_step_id: step_quality-impact-review
+    result: pass
+    blocking: true
+    notes: >
+      Access was limited to the affected machine, line, and production interval.
+
+outcome:
+  status: successful
+  summary: >
+    The cross-department workflow converted an equipment anomaly into a
+    human-approved inspection request and a temporary quality hold without
+    permitting autonomous shutdown. Origin lineage and policy restrictions
+    remained attached throughout both handoffs.
+  business_effects:
+    - effect_type: risk_reduced
+      description: >
+        Reduced the risk of continued operation with a potentially degrading
+        spindle bearing.
+      measurement_status: observed
+      metric_reference: internal://metrics/risk-events/spindle-a17-20260716
+
+    - effect_type: quality_improved
+      description: >
+        Isolated one potentially affected lot for remeasurement before release.
+      measurement_status: observed
+      metric_reference: internal://metrics/quality-holds/lot-20260716-L3-04
+
+    - effect_type: downtime_avoided
+      description: >
+        Replaced an uncontrolled interruption with a human-approved controlled
+        stop at the next safe production transition.
+      measurement_status: estimated
+      metric_reference: internal://metrics/downtime-estimates/spindle-a17-001
+
+  output_references:
+    - internal://maintenance/inspection-request/spindle-a17-001
+    - internal://quality/lot-hold/lot-20260716-L3-04
+    - internal://trace/spindle-a17/final-report-001
+
+  unresolved_issues:
+    - Mechanical inspection results are not yet available.
+    - Final product-lot disposition remains pending remeasurement.
+
+  follow_up_required: true
+  follow_up_owner:
+    actor_id: maintenance-engineering
+    actor_type: team
+    display_name: Maintenance Engineering
+
+audit_summary:
+  trace_complete: true
+  causality_complete: true
+  attribution_preserved: true
+  permissions_propagated: true
+  anomalies: []
+  review_status: accepted
+  reviewed_by:
+    actor_id: ai-governance-office
+    actor_type: team
+    display_name: AI Governance Office
+  reviewed_at: "2026-07-16T10:24:00+09:00"
+  review_notes: >
+    The trace shows authorized data access, explicit human authority at both
+    consequential decisions, and successful propagation of origin restrictions.
+
+integrity:
+  algorithm: sha256
+  digest: "1e675055eb4fcf1ea0b71e26c59a69d7486010f6bc8f70c0b725b195831ec0af"
+  signed_by: enterprise-execution-trace-service
+
+lifecycle:
+  status: completed
+  retention_policy: >
+    Retain for seven years with the linked origin record, skill binding,
+    execution evidence, and human approval records.
+  superseded_by: null
+  invalidated_reason: null
+
+annotations:
+  - annotation_id: annotation_value-analysis-pending-001
+    created_at: "2026-07-16T10:24:30+09:00"
+    created_by:
+      actor_id: enterprise-value-analysis-team
+      actor_type: team
+      display_name: Enterprise Value Analysis Team
+    text: >
+      Business effects may be used as inputs to future contribution and value
+      attribution records after inspection outcomes are verified.
