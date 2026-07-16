@@ -38,6 +38,15 @@ VALIDATION_TARGETS = [
         / "knowledge-to-agent-skill-binding.example.yaml",
         "Knowledge-to-Agent Skill Binding",
     ),
+    (
+        ROOT_DIR
+        / "schemas"
+        / "cross-department-execution-trace.schema.json",
+        ROOT_DIR
+        / "examples"
+        / "cross-department-execution-trace.example.yaml",
+        "Cross-Department Execution Trace",
+    ),
 ]
 
 
@@ -77,7 +86,7 @@ def load_yaml(path: Path) -> dict[str, Any]:
 
 
 def format_error_path(error: Any) -> str:
-    """Convert a jsonschema path into readable dotted notation."""
+    """Convert a jsonschema error path into dotted notation."""
     if not error.absolute_path:
         return "<root>"
 
@@ -122,8 +131,7 @@ def validate_document(
 
     if errors:
         for error in errors:
-            path = format_error_path(error)
-            print(f"  [error] {path}: {error.message}")
+            print(f"  [error] {format_error_path(error)}: {error.message}")
 
         print(f"[failed] {label}")
         return False
