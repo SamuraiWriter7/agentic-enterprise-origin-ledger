@@ -1,0 +1,367 @@
+schema_version: "0.2.0"
+record_type: knowledge_to_agent_skill_binding
+binding_id: kasb_spindle-diagnosis-001
+created_at: "2026-07-16T09:45:00+09:00"
+
+origin_reference:
+  origin_record_id: ekor_spindle-vibration-001
+  origin_id: origin_spindle-vibration-001
+  origin_schema_version: "0.1.0"
+  origin_status: approved
+
+  integrity:
+    algorithm: sha256
+    digest: "94f0db57e29ce06708b4863d78ef84f9e02f3784af367ba901ba0d3b3e45a211"
+
+  knowledge_steward:
+    actor_id: maintenance-knowledge-steward
+    actor_type: human
+    display_name: Maintenance Knowledge Steward
+
+skill_definition:
+  skill_id: skill_spindle-anomaly-triage
+  skill_name: Spindle Anomaly Triage
+  skill_version: "0.1.0"
+  skill_type: recommendation
+  agent_role: Predictive Maintenance Support Agent
+
+  description: >
+    Evaluates vibration, cutting-surface, lubrication, and maintenance-history
+    signals to recommend whether a spindle should receive accelerated human
+    inspection.
+
+  inputs:
+    - name: vibration_features
+      data_type: object
+      required: true
+      description: >
+        Extracted vibration-frequency and amplitude features.
+      sensitivity: confidential
+      validation_rule: >
+        Must originate from a calibrated Plant A sensor.
+
+    - name: cutting_surface_observation
+      data_type: string
+      required: true
+      description: >
+        Human or machine-vision observation of cutting-surface irregularities.
+      sensitivity: internal
+      validation_rule: >
+        Must use the approved observation vocabulary.
+
+    - name: lubrication_history
+      data_type: object
+      required: true
+      description: >
+        Recent lubrication events and anomaly records.
+      sensitivity: confidential
+      validation_rule: >
+        Must cover at least the previous 30 days.
+
+  outputs:
+    - name: inspection_priority
+      data_type: string
+      required: true
+      description: "Recommended inspection priority: normal, elevated, or urgent."
+      sensitivity: internal
+      validation_rule: >
+        Must be one of normal, elevated, or urgent.
+
+    - name: rationale
+      data_type: string
+      required: true
+      description: >
+        Human-readable explanation referencing the observed signals.
+      sensitivity: internal
+      validation_rule: >
+        Must identify supporting signals and uncertainty.
+
+    - name: origin_trace
+      data_type: reference
+      required: true
+      description: >
+        Reference to the originating enterprise knowledge record.
+      sensitivity: internal
+      validation_rule: >
+        Must equal origin_spindle-vibration-001.
+
+  invocation_conditions:
+    - The equipment is a validated spindle model operated at Plant A.
+    - Vibration sensor calibration is current.
+    - Required maintenance history is available.
+    - The agent is operating in advisory mode.
+
+  prohibited_behaviors:
+    - Do not autonomously stop production equipment.
+    - Do not present the recommendation as a certified mechanical diagnosis.
+    - Do not suppress uncertainty or missing-data warnings.
+    - Do not remove the origin trace from the output.
+
+  tool_dependencies:
+    - vibration-feature-reader
+    - maintenance-history-reader
+    - inspection-request-drafter
+
+  model_requirements:
+    - Must support structured outputs.
+    - Must preserve required origin references.
+    - Must not send restricted inputs outside the approved enterprise environment.
+
+transformation:
+  transformation_id: transform_spindle-skill-001
+  method: hybrid
+
+  transformed_by:
+    - actor_id: knowledge-engineering-team
+      actor_type: team
+      display_name: Enterprise Knowledge Engineering Team
+
+    - actor_id: agent_skill-compiler-01
+      actor_type: agent
+      display_name: Skill Compilation Agent
+
+  transformed_at: "2026-07-16T09:40:00+09:00"
+
+  steps:
+    - step_id: step_extract-operational-signals
+      action: >
+        Extract operational signals, boundaries, and escalation conditions
+        from the approved origin record.
+      performed_by:
+        actor_id: agent_skill-compiler-01
+        actor_type: agent
+        display_name: Skill Compilation Agent
+      result: >
+        Produced a structured draft of inputs, outputs, and invocation
+        conditions.
+      review_required: true
+
+    - step_id: step_human-review
+      action: >
+        Review the compiled skill against maintenance engineering practice
+        and safety boundaries.
+      performed_by:
+        actor_id: maintenance-engineering-review-board
+        actor_type: team
+        display_name: Maintenance Engineering Review Board
+      result: >
+        Restricted the skill to advisory use and added mandatory human
+        inspection escalation.
+      review_required: false
+
+    - step_id: step_bind-origin-trace
+      action: >
+        Bind every skill output to the origin record and knowledge steward.
+      performed_by:
+        actor_id: knowledge-ledger-service
+        actor_type: system
+        display_name: Enterprise Knowledge Ledger Service
+      result: >
+        Added mandatory origin_trace output and immutable provenance reference.
+      review_required: false
+
+  retained_elements:
+    - >
+      Combined use of vibration, cutting-surface, lubrication, and
+      maintenance-history signals.
+    - Limitation to validated spindle models at Plant A.
+    - Requirement for authorized human mechanical inspection.
+    - Contributor attribution and knowledge-steward reference.
+    - Prohibition on autonomous equipment shutdown.
+
+  loss_and_distortion:
+    - item: >
+        Experienced technicians may perceive sound and vibration nuances
+        not represented in structured sensor features.
+      severity: medium
+      mitigation: >
+        Require human review when confidence is below the approved threshold
+        or observations conflict.
+
+    - item: >
+        Historical examples contain incomplete data for some older failures.
+      severity: medium
+      mitigation: >
+        Keep the skill advisory and display evidence-quality warnings.
+
+  attribution_preserved: true
+
+  source_material_references:
+    - internal://knowledge-capture/interviews/spindle-2026-07-10
+    - internal://maintenance/history/spindle-failures-2018-2026
+    - internal://engineering/vibration-analysis/report-2026-0712
+
+policy_binding:
+  inherit_origin_permissions: true
+  usage_scope: internal_only
+  attribution_required: true
+  human_review_required: true
+  autonomous_execution_allowed: false
+
+  allowed_actions:
+    - Read approved Plant A vibration features.
+    - Read approved maintenance-history records.
+    - Recommend an inspection priority.
+    - Draft an inspection request for human approval.
+    - Explain which signals influenced the recommendation.
+
+  prohibited_actions:
+    - Stop, restart, or reconfigure production equipment.
+    - Create a final mechanical diagnosis.
+    - Alter maintenance records.
+    - Use the skill outside the validated equipment scope.
+    - Remove contributor or origin references.
+
+  escalation_conditions:
+    - Inspection priority is urgent.
+    - Required input data is missing or inconsistent.
+    - Sensor calibration is expired.
+    - The equipment model is outside the validated scope.
+    - The agent detects a possible safety-critical condition.
+    - Confidence falls below the approved operational threshold.
+
+  data_handling:
+    input_classification: confidential
+    output_classification: internal
+    logging_required: true
+    redaction_required: true
+    retention: >
+      Retain execution traces for seven years, while separating contributor
+      identity from routine agent-visible outputs.
+
+  policy_references:
+    - internal://policies/enterprise-knowledge-use-policy-v1
+    - internal://policies/predictive-maintenance-human-review-v2
+    - internal://policies/agent-execution-logging-v1
+
+validation:
+  validation_status: conditionally_passed
+  validated_at: "2026-07-16T09:42:00+09:00"
+
+  validated_by:
+    - actor_id: maintenance-engineering-review-board
+      actor_type: team
+      display_name: Maintenance Engineering Review Board
+
+    - actor_id: ai-governance-office
+      actor_type: team
+      display_name: AI Governance Office
+
+  test_cases:
+    - test_id: test_known-bearing-pattern
+      scenario: >
+        Validated spindle with high-frequency vibration increase, irregular
+        cutting marks, and a recent lubrication anomaly.
+      expected_behavior: >
+        Recommend urgent human inspection and explain all supporting signals.
+      actual_result: >
+        Recommended urgent inspection and cited all three supporting signals.
+      status: passed
+      evidence_reference: internal://validation/spindle-skill/test-known-pattern
+
+    - test_id: test_tool-change-false-positive
+      scenario: >
+        Vibration increase occurs immediately after a documented tool change
+        without lubrication or cutting-surface anomalies.
+      expected_behavior: >
+        Avoid urgent escalation and identify the tool change as a competing
+        explanation.
+      actual_result: >
+        Recommended elevated monitoring and identified the recent tool change.
+      status: passed
+      evidence_reference: internal://validation/spindle-skill/test-tool-change
+
+    - test_id: test_out-of-scope-equipment
+      scenario: >
+        The skill is invoked for a spindle model not represented in the
+        approved origin evidence.
+      expected_behavior: >
+        Refuse operational recommendation and escalate for human review.
+      actual_result: >
+        Refused the recommendation and generated a scope warning.
+      status: passed
+      evidence_reference: internal://validation/spindle-skill/test-out-of-scope
+
+    - test_id: test_missing-calibration
+      scenario: >
+        The vibration sensor calibration date is missing.
+      expected_behavior: >
+        Do not generate a normal operational recommendation.
+      actual_result: >
+        Blocked the recommendation and requested calibration verification.
+      status: passed
+      evidence_reference: internal://validation/spindle-skill/test-calibration
+
+  acceptance_criteria:
+    - All outputs retain the origin trace.
+    - Out-of-scope invocations are blocked.
+    - Urgent recommendations always require human review.
+    - No test permits autonomous equipment shutdown.
+    - Explanations identify supporting evidence and uncertainty.
+
+  limitations:
+    - Pilot validation is limited to Plant A.
+    - Low-frequency mechanical faults are not fully represented.
+    - Production activation requires ongoing drift monitoring.
+
+deployment:
+  deployment_status: pilot
+  environment: production
+
+  allowed_agent_ids:
+    - agent_predictive-maintenance-01
+    - agent_maintenance-triage-02
+
+  operational_scope:
+    - Plant A validated CNC machining centers
+    - Advisory predictive-maintenance triage
+    - Human-approved inspection-request drafting
+
+  activation_conditions:
+    - The referenced origin record remains approved.
+    - All required tools are available.
+    - Current sensor calibration is confirmed.
+    - Execution logging is active.
+    - A human reviewer is available for escalations.
+
+  rollback_conditions:
+    - The origin record is suspended or retired.
+    - Validation tests regress.
+    - Equipment configuration changes invalidate the evidence.
+    - The skill omits attribution or origin references.
+    - Safety-critical false negatives exceed the approved threshold.
+
+  monitoring_requirements:
+    - Record every invocation and resulting recommendation.
+    - Track false positives, false negatives, and human overrides.
+    - Detect drift in sensor and equipment configurations.
+    - Review the skill monthly during the pilot.
+    - Compare agent recommendations with authorized inspection outcomes.
+
+lifecycle:
+  status: approved
+  effective_from: "2026-07-16T10:00:00+09:00"
+  expires_at: "2026-10-16T10:00:00+09:00"
+  superseded_by: null
+
+  review:
+    status: accepted
+    reviewer:
+      actor_id: ai-governance-office
+      actor_type: team
+      display_name: AI Governance Office
+    reviewed_at: "2026-07-16T09:44:00+09:00"
+    notes: >
+      Approved for a controlled production pilot in advisory mode.
+      Autonomous execution remains prohibited.
+
+annotations:
+  - annotation_id: annotation_monthly-review-001
+    created_at: "2026-07-16T09:44:30+09:00"
+    created_by:
+      actor_id: ai-governance-office
+      actor_type: team
+      display_name: AI Governance Office
+    text: >
+      Pilot approval expires unless monthly monitoring reports confirm
+      continued scope validity and acceptable human-override rates.
