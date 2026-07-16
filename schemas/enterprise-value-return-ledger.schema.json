@@ -1,0 +1,1261 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/agentic-enterprise-origin-ledger/schemas/enterprise-value-return-ledger.schema.json",
+  "title": "Enterprise Value Return Ledger",
+  "description": "A ledger that binds verified enterprise value to an approved human contribution attribution record and records monetary and non-monetary value return, collective allocations, holdbacks, settlement status, governance, and audit integrity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "ledger_id",
+    "created_at",
+    "value_case",
+    "lineage",
+    "value_verification",
+    "return_policy",
+    "eligibility",
+    "recipient_allocations",
+    "collective_allocations",
+    "non_monetary_returns",
+    "settlement_summary",
+    "governance",
+    "integrity",
+    "lifecycle"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.5.0"
+    },
+    "record_type": {
+      "type": "string",
+      "const": "enterprise_value_return_ledger"
+    },
+    "ledger_id": {
+      "type": "string",
+      "pattern": "^evrl_[a-z0-9][a-z0-9._-]{7,127}$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "value_case": {
+      "$ref": "#/$defs/valueCase"
+    },
+    "lineage": {
+      "$ref": "#/$defs/lineage"
+    },
+    "value_verification": {
+      "$ref": "#/$defs/valueVerification"
+    },
+    "return_policy": {
+      "$ref": "#/$defs/returnPolicy"
+    },
+    "eligibility": {
+      "$ref": "#/$defs/eligibility"
+    },
+    "recipient_allocations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/recipientAllocation"
+      }
+    },
+    "collective_allocations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/collectiveAllocation"
+      }
+    },
+    "non_monetary_returns": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/nonMonetaryReturn"
+      }
+    },
+    "settlement_summary": {
+      "$ref": "#/$defs/settlementSummary"
+    },
+    "governance": {
+      "$ref": "#/$defs/governance"
+    },
+    "integrity": {
+      "$ref": "#/$defs/integrity"
+    },
+    "lifecycle": {
+      "$ref": "#/$defs/lifecycle"
+    },
+    "annotations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/annotation"
+      },
+      "default": []
+    }
+  },
+  "$defs": {
+    "actorReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actor_id",
+        "actor_type"
+      ],
+      "properties": {
+        "actor_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "actor_type": {
+          "type": "string",
+          "enum": [
+            "human",
+            "human_team",
+            "agent",
+            "system",
+            "organization",
+            "fund"
+          ]
+        },
+        "display_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "digest"
+      ],
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "enum": [
+            "sha256",
+            "sha512",
+            "blake3"
+          ]
+        },
+        "digest": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 512
+        },
+        "signed_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      }
+    },
+    "money": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "currency",
+        "amount"
+      ],
+      "properties": {
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "amount": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "timePeriod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start_at",
+        "end_at"
+      ],
+      "properties": {
+        "start_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "end_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "valueCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "organization_id",
+        "case_id",
+        "title",
+        "period",
+        "outcome_scope",
+        "currency",
+        "valuation_status"
+      ],
+      "properties": {
+        "organization_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "case_id": {
+          "type": "string",
+          "pattern": "^valuecase_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "period": {
+          "$ref": "#/$defs/timePeriod"
+        },
+        "outcome_scope": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "valuation_status": {
+          "type": "string",
+          "const": "verified"
+        },
+        "valuation_boundary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "origin_record_id",
+        "skill_binding_id",
+        "execution_trace_ids",
+        "attribution_record",
+        "outcome_references"
+      ],
+      "properties": {
+        "origin_record_id": {
+          "type": "string",
+          "pattern": "^ekor_[a-z0-9][a-z0-9._-]{7,127}$"
+        },
+        "skill_binding_id": {
+          "type": "string",
+          "pattern": "^kasb_[a-z0-9][a-z0-9._-]{7,127}$"
+        },
+        "execution_trace_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^cdet_[a-z0-9][a-z0-9._-]{7,127}$"
+          }
+        },
+        "attribution_record": {
+          "$ref": "#/$defs/attributionReference"
+        },
+        "outcome_references": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        }
+      }
+    },
+    "attributionReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attribution_id",
+        "schema_version",
+        "status",
+        "allocation_readiness",
+        "integrity"
+      ],
+      "properties": {
+        "attribution_id": {
+          "type": "string",
+          "pattern": "^hca_[a-z0-9][a-z0-9._-]{7,127}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "0.4.0"
+        },
+        "status": {
+          "type": "string",
+          "const": "approved"
+        },
+        "allocation_readiness": {
+          "type": "string",
+          "const": "ready"
+        },
+        "integrity": {
+          "$ref": "#/$defs/integrity"
+        }
+      }
+    },
+    "valueVerification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "methodology_id",
+        "methodology_version",
+        "components",
+        "gross_verified_value",
+        "excluded_value",
+        "verified_by",
+        "verified_at",
+        "evidence_references",
+        "confidence",
+        "double_counting_check"
+      ],
+      "properties": {
+        "methodology_id": {
+          "type": "string",
+          "pattern": "^valuation_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "methodology_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/valueComponent"
+          }
+        },
+        "gross_verified_value": {
+          "$ref": "#/$defs/money"
+        },
+        "excluded_value": {
+          "$ref": "#/$defs/money"
+        },
+        "verified_by": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/actorReference"
+          }
+        },
+        "verified_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_references": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "high",
+            "verified"
+          ]
+        },
+        "double_counting_check": {
+          "type": "string",
+          "enum": [
+            "passed",
+            "warning",
+            "failed"
+          ]
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        }
+      }
+    },
+    "valueComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_id",
+        "effect_type",
+        "description",
+        "value",
+        "verification_status",
+        "inclusion_status",
+        "measurement_method",
+        "evidence_references"
+      ],
+      "properties": {
+        "component_id": {
+          "type": "string",
+          "pattern": "^vcomponent_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "effect_type": {
+          "type": "string",
+          "enum": [
+            "cost_avoidance",
+            "revenue_gain",
+            "time_saving",
+            "quality_improvement",
+            "risk_reduction",
+            "energy_saving",
+            "other"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "value": {
+          "$ref": "#/$defs/money"
+        },
+        "verification_status": {
+          "type": "string",
+          "enum": [
+            "estimated",
+            "observed",
+            "verified",
+            "disputed"
+          ]
+        },
+        "inclusion_status": {
+          "type": "string",
+          "enum": [
+            "included",
+            "excluded"
+          ]
+        },
+        "measurement_method": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "evidence_references": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "exclusion_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "inclusion_status": {
+                "const": "included"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "verification_status": {
+                "const": "verified"
+              },
+              "exclusion_reason": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "inclusion_status": {
+                "const": "excluded"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "exclusion_reason"
+            ]
+          }
+        }
+      ]
+    },
+    "returnPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_id",
+        "policy_version",
+        "basis_type",
+        "return_rate",
+        "gross_return_pool",
+        "attribution_basis",
+        "unattributed_destination",
+        "holdback_rate",
+        "allocation_precision",
+        "policy_references"
+      ],
+      "properties": {
+        "policy_id": {
+          "type": "string",
+          "pattern": "^returnpolicy_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "policy_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "basis_type": {
+          "type": "string",
+          "enum": [
+            "percentage_of_verified_value",
+            "fixed_pool",
+            "hybrid"
+          ]
+        },
+        "return_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "gross_return_pool": {
+          "$ref": "#/$defs/money"
+        },
+        "minimum_pool": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maximum_pool": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attribution_basis": {
+          "type": "string",
+          "enum": [
+            "confirmed_relative_weights",
+            "approved_adjusted_weights"
+          ]
+        },
+        "unattributed_destination": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "holdback_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "allocation_precision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "policy_references": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "policy_notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      }
+    },
+    "eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "snapshot_at",
+        "rules",
+        "decisions"
+      ],
+      "properties": {
+        "snapshot_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "rules": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/eligibilityDecision"
+          }
+        }
+      }
+    },
+    "eligibilityDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contribution_id",
+        "eligible",
+        "decision",
+        "reason",
+        "reviewed_by"
+      ],
+      "properties": {
+        "contribution_id": {
+          "type": "string",
+          "pattern": "^contribution_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "eligible": {
+          "type": "boolean"
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "eligible",
+            "ineligible",
+            "deferred"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "reviewed_by": {
+          "$ref": "#/$defs/actorReference"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "decision": {
+                "const": "eligible"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "eligible": {
+                "const": true
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "eligible": {
+                "const": false
+              }
+            }
+          }
+        }
+      ]
+    },
+    "recipientAllocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allocation_id",
+        "contribution_id",
+        "recipient",
+        "allocation_weight",
+        "allocated_value",
+        "immediate_value",
+        "held_value",
+        "hold_reason",
+        "settlement_route",
+        "settlement_status",
+        "settlement_reference"
+      ],
+      "properties": {
+        "allocation_id": {
+          "type": "string",
+          "pattern": "^allocation_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "contribution_id": {
+          "type": "string",
+          "pattern": "^contribution_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "recipient": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/actorReference"
+            },
+            {
+              "properties": {
+                "actor_type": {
+                  "enum": [
+                    "human",
+                    "human_team"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "allocation_weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "allocated_value": {
+          "$ref": "#/$defs/money"
+        },
+        "immediate_value": {
+          "$ref": "#/$defs/money"
+        },
+        "held_value": {
+          "$ref": "#/$defs/money"
+        },
+        "hold_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1500
+        },
+        "settlement_route": {
+          "type": "string",
+          "enum": [
+            "payroll",
+            "bonus",
+            "team_budget",
+            "grant",
+            "invoice",
+            "benefit_credit",
+            "other"
+          ]
+        },
+        "settlement_status": {
+          "type": "string",
+          "enum": [
+            "pending_review",
+            "authorized",
+            "scheduled",
+            "partially_settled",
+            "settled",
+            "held",
+            "cancelled"
+          ]
+        },
+        "scheduled_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "settlement_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1500
+        }
+      }
+    },
+    "collectiveAllocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allocation_id",
+        "allocation_type",
+        "destination",
+        "allocation_weight",
+        "allocated_value",
+        "immediate_value",
+        "held_value",
+        "purpose",
+        "settlement_status"
+      ],
+      "properties": {
+        "allocation_id": {
+          "type": "string",
+          "pattern": "^collective_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "allocation_type": {
+          "type": "string",
+          "enum": [
+            "unattributed_share",
+            "shared_knowledge_fund",
+            "infrastructure_share",
+            "appeal_reserve",
+            "verification_reserve",
+            "other"
+          ]
+        },
+        "destination": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "allocation_weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "allocated_value": {
+          "$ref": "#/$defs/money"
+        },
+        "immediate_value": {
+          "$ref": "#/$defs/money"
+        },
+        "held_value": {
+          "$ref": "#/$defs/money"
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "settlement_status": {
+          "type": "string",
+          "enum": [
+            "pending_review",
+            "authorized",
+            "scheduled",
+            "settled",
+            "held",
+            "cancelled"
+          ]
+        },
+        "settlement_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        }
+      }
+    },
+    "nonMonetaryReturn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "return_id",
+        "beneficiary",
+        "return_type",
+        "description",
+        "unit",
+        "quantity",
+        "monetary_equivalent_in_ledger",
+        "status"
+      ],
+      "properties": {
+        "return_id": {
+          "type": "string",
+          "pattern": "^nonmonetary_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "contribution_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^contribution_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "beneficiary": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "return_type": {
+          "type": "string",
+          "enum": [
+            "recognition",
+            "training_credit",
+            "protected_time",
+            "governance_participation",
+            "knowledge_stewardship_role",
+            "resource_access",
+            "other"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "quantity": {
+          "type": "number",
+          "minimum": 0
+        },
+        "monetary_equivalent_in_ledger": {
+          "type": "boolean",
+          "const": false
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "approved",
+            "scheduled",
+            "delivered",
+            "cancelled"
+          ]
+        }
+      }
+    },
+    "settlementSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "currency",
+        "total_pool",
+        "total_recipient_allocations",
+        "total_collective_allocations",
+        "total_immediate",
+        "total_held",
+        "total_settled",
+        "total_unallocated",
+        "balance_status",
+        "settlement_ready",
+        "readiness_conditions"
+      ],
+      "properties": {
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "total_pool": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_recipient_allocations": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_collective_allocations": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_immediate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_held": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_settled": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_unallocated": {
+          "type": "number",
+          "minimum": 0
+        },
+        "balance_status": {
+          "type": "string",
+          "enum": [
+            "balanced",
+            "warning",
+            "unbalanced"
+          ]
+        },
+        "settlement_ready": {
+          "type": "boolean"
+        },
+        "readiness_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "review_required",
+        "review_status",
+        "reviewers",
+        "contributor_notice_status",
+        "appeal_available",
+        "appeal_window_ends_at",
+        "appeals",
+        "tax_and_employment_boundary",
+        "privacy_and_identity_controls",
+        "prohibited_uses",
+        "reviewed_at"
+      ],
+      "properties": {
+        "review_required": {
+          "type": "boolean",
+          "const": true
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "not_reviewed",
+            "in_review",
+            "accepted",
+            "rejected",
+            "revision_required"
+          ]
+        },
+        "reviewers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/actorReference"
+          }
+        },
+        "contributor_notice_status": {
+          "type": "string",
+          "enum": [
+            "not_sent",
+            "partially_sent",
+            "delivered",
+            "acknowledged"
+          ]
+        },
+        "appeal_available": {
+          "type": "boolean"
+        },
+        "appeal_window_ends_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "appeals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/appeal"
+          }
+        },
+        "tax_and_employment_boundary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "privacy_and_identity_controls": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "prohibited_uses": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "review_notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      }
+    },
+    "appeal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "appeal_id",
+        "status",
+        "raised_by",
+        "reason",
+        "resolution"
+      ],
+      "properties": {
+        "appeal_id": {
+          "type": "string",
+          "pattern": "^appeal_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "under_review",
+            "resolved",
+            "rejected",
+            "withdrawn"
+          ]
+        },
+        "raised_by": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "resolution": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "effective_from",
+        "retention_policy"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "pending_review",
+            "authorized",
+            "partially_settled",
+            "settled",
+            "suspended",
+            "voided",
+            "archived"
+          ]
+        },
+        "effective_from": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "closed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "retention_policy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "superseded_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^evrl_[a-z0-9][a-z0-9._-]{7,127}$"
+        },
+        "void_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      }
+    },
+    "annotation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "annotation_id",
+        "created_at",
+        "created_by",
+        "text"
+      ],
+      "properties": {
+        "annotation_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      }
+    }
+  }
+}
