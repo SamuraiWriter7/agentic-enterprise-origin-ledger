@@ -1,0 +1,898 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/agentic-enterprise-origin-ledger/schemas/knowledge-to-agent-skill-binding.schema.json",
+  "title": "Knowledge-to-Agent Skill Binding",
+  "description": "A record that binds an approved enterprise knowledge origin to an AI-agent skill while preserving provenance, attribution, permissions, transformation details, validation evidence, and deployment controls.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "binding_id",
+    "created_at",
+    "origin_reference",
+    "skill_definition",
+    "transformation",
+    "policy_binding",
+    "validation",
+    "deployment",
+    "lifecycle"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.2.0"
+    },
+    "record_type": {
+      "type": "string",
+      "const": "knowledge_to_agent_skill_binding"
+    },
+    "binding_id": {
+      "type": "string",
+      "pattern": "^kasb_[a-z0-9][a-z0-9._-]{7,127}$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "origin_reference": {
+      "$ref": "#/$defs/originReference"
+    },
+    "skill_definition": {
+      "$ref": "#/$defs/skillDefinition"
+    },
+    "transformation": {
+      "$ref": "#/$defs/transformation"
+    },
+    "policy_binding": {
+      "$ref": "#/$defs/policyBinding"
+    },
+    "validation": {
+      "$ref": "#/$defs/validation"
+    },
+    "deployment": {
+      "$ref": "#/$defs/deployment"
+    },
+    "lifecycle": {
+      "$ref": "#/$defs/lifecycle"
+    },
+    "annotations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/annotation"
+      },
+      "default": []
+    }
+  },
+  "$defs": {
+    "originReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "origin_record_id",
+        "origin_id",
+        "origin_schema_version",
+        "origin_status",
+        "integrity"
+      ],
+      "properties": {
+        "origin_record_id": {
+          "type": "string",
+          "pattern": "^ekor_[a-z0-9][a-z0-9._-]{7,127}$"
+        },
+        "origin_id": {
+          "type": "string",
+          "pattern": "^origin_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "origin_schema_version": {
+          "type": "string",
+          "const": "0.1.0"
+        },
+        "origin_status": {
+          "type": "string",
+          "const": "approved"
+        },
+        "integrity": {
+          "$ref": "#/$defs/integrity"
+        },
+        "knowledge_steward": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/actorReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "digest"
+      ],
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "enum": [
+            "sha256",
+            "sha512",
+            "blake3"
+          ]
+        },
+        "digest": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 512
+        }
+      }
+    },
+    "skillDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_id",
+        "skill_name",
+        "skill_version",
+        "skill_type",
+        "agent_role",
+        "description",
+        "inputs",
+        "outputs",
+        "invocation_conditions",
+        "prohibited_behaviors"
+      ],
+      "properties": {
+        "skill_id": {
+          "type": "string",
+          "pattern": "^skill_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "skill_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "skill_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$"
+        },
+        "skill_type": {
+          "type": "string",
+          "enum": [
+            "advisory",
+            "classification",
+            "retrieval",
+            "analysis",
+            "planning",
+            "recommendation",
+            "workflow_execution",
+            "monitoring",
+            "other"
+          ]
+        },
+        "agent_role": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/ioField"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/ioField"
+          }
+        },
+        "invocation_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "prohibited_behaviors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "tool_dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "uniqueItems": true,
+          "default": []
+        },
+        "model_requirements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "default": []
+        }
+      }
+    },
+    "ioField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "data_type",
+        "required",
+        "description",
+        "sensitivity"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_.-]{0,127}$"
+        },
+        "data_type": {
+          "type": "string",
+          "enum": [
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "object",
+            "array",
+            "timestamp",
+            "reference"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "sensitivity": {
+          "type": "string",
+          "enum": [
+            "public",
+            "internal",
+            "confidential",
+            "restricted"
+          ]
+        },
+        "validation_rule": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        }
+      }
+    },
+    "transformation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transformation_id",
+        "method",
+        "transformed_by",
+        "transformed_at",
+        "steps",
+        "retained_elements",
+        "loss_and_distortion",
+        "attribution_preserved",
+        "source_material_references"
+      ],
+      "properties": {
+        "transformation_id": {
+          "type": "string",
+          "pattern": "^transform_[a-z0-9][a-z0-9._-]{5,127}$"
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "manual_encoding",
+            "agent_assisted_encoding",
+            "rule_extraction",
+            "prompt_compilation",
+            "workflow_compilation",
+            "hybrid",
+            "other"
+          ]
+        },
+        "transformed_by": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/actorReference"
+          }
+        },
+        "transformed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/transformationStep"
+          }
+        },
+        "retained_elements": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "loss_and_distortion": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lossItem"
+          },
+          "default": []
+        },
+        "attribution_preserved": {
+          "type": "boolean",
+          "const": true
+        },
+        "source_material_references": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        }
+      }
+    },
+    "transformationStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step_id",
+        "action",
+        "performed_by",
+        "result"
+      ],
+      "properties": {
+        "step_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "performed_by": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "result": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "review_required": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "lossItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "item",
+        "severity",
+        "mitigation"
+      ],
+      "properties": {
+        "item": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "mitigation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      }
+    },
+    "policyBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inherit_origin_permissions",
+        "usage_scope",
+        "attribution_required",
+        "human_review_required",
+        "autonomous_execution_allowed",
+        "allowed_actions",
+        "prohibited_actions",
+        "escalation_conditions",
+        "data_handling"
+      ],
+      "properties": {
+        "inherit_origin_permissions": {
+          "type": "boolean",
+          "const": true
+        },
+        "usage_scope": {
+          "type": "string",
+          "enum": [
+            "internal_only",
+            "approved_partners",
+            "public",
+            "restricted"
+          ]
+        },
+        "attribution_required": {
+          "type": "boolean",
+          "const": true
+        },
+        "human_review_required": {
+          "type": "boolean"
+        },
+        "autonomous_execution_allowed": {
+          "type": "boolean"
+        },
+        "allowed_actions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "prohibited_actions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "escalation_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "data_handling": {
+          "$ref": "#/$defs/dataHandling"
+        },
+        "policy_references": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "default": []
+        }
+      }
+    },
+    "dataHandling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_classification",
+        "output_classification",
+        "logging_required",
+        "redaction_required",
+        "retention"
+      ],
+      "properties": {
+        "input_classification": {
+          "type": "string",
+          "enum": [
+            "public",
+            "internal",
+            "confidential",
+            "restricted"
+          ]
+        },
+        "output_classification": {
+          "type": "string",
+          "enum": [
+            "public",
+            "internal",
+            "confidential",
+            "restricted"
+          ]
+        },
+        "logging_required": {
+          "type": "boolean"
+        },
+        "redaction_required": {
+          "type": "boolean"
+        },
+        "retention": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "validation_status",
+        "validated_at",
+        "validated_by",
+        "test_cases",
+        "acceptance_criteria",
+        "limitations"
+      ],
+      "properties": {
+        "validation_status": {
+          "type": "string",
+          "enum": [
+            "not_tested",
+            "in_testing",
+            "passed",
+            "failed",
+            "conditionally_passed"
+          ]
+        },
+        "validated_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "validated_by": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/actorReference"
+          }
+        },
+        "test_cases": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/testCase"
+          }
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "default": []
+        }
+      }
+    },
+    "testCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "test_id",
+        "scenario",
+        "expected_behavior",
+        "actual_result",
+        "status"
+      ],
+      "properties": {
+        "test_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "scenario": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "expected_behavior": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "actual_result": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "passed",
+            "failed",
+            "blocked",
+            "not_run"
+          ]
+        },
+        "evidence_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "deployment_status",
+        "environment",
+        "allowed_agent_ids",
+        "operational_scope",
+        "activation_conditions",
+        "rollback_conditions"
+      ],
+      "properties": {
+        "deployment_status": {
+          "type": "string",
+          "enum": [
+            "not_deployed",
+            "pilot",
+            "active",
+            "suspended",
+            "retired"
+          ]
+        },
+        "environment": {
+          "type": "string",
+          "enum": [
+            "development",
+            "test",
+            "staging",
+            "production"
+          ]
+        },
+        "allowed_agent_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "uniqueItems": true
+        },
+        "operational_scope": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "activation_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "rollback_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "monitoring_requirements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "default": []
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "review"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "pending_review",
+            "approved",
+            "suspended",
+            "retired"
+          ]
+        },
+        "effective_from": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "superseded_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^kasb_[a-z0-9][a-z0-9._-]{7,127}$"
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_reviewed",
+            "in_review",
+            "accepted",
+            "rejected",
+            "revision_required"
+          ]
+        },
+        "reviewer": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/actorReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      }
+    },
+    "actorReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actor_id",
+        "actor_type"
+      ],
+      "properties": {
+        "actor_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "actor_type": {
+          "type": "string",
+          "enum": [
+            "human",
+            "team",
+            "agent",
+            "system",
+            "organization"
+          ]
+        },
+        "display_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      }
+    },
+    "annotation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "annotation_id",
+        "created_at",
+        "created_by",
+        "text"
+      ],
+      "properties": {
+        "annotation_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "$ref": "#/$defs/actorReference"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      }
+    }
+  }
+}
