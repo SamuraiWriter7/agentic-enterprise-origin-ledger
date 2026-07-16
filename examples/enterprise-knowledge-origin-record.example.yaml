@@ -1,0 +1,230 @@
+schema_version: "0.1.0"
+record_type: enterprise_knowledge_origin_record
+record_id: ekor_spindle-vibration-001
+created_at: "2026-07-16T09:30:00+09:00"
+
+enterprise_context:
+  organization_id: org_kazene-manufacturing
+  organization_name: Kazene Manufacturing Co., Ltd.
+  business_unit: Precision Machining Division
+  jurisdiction: JP
+  confidentiality: confidential
+  system_boundary: >
+    Knowledge may be used within the machining, maintenance,
+    quality assurance, and internal training environments.
+
+knowledge_origin:
+  origin_id: origin_spindle-vibration-001
+  title: Early spindle bearing failure detection by vibration pattern
+  origin_type: combined_origin
+  description: >
+    A diagnostic practice developed through repeated observation by
+    experienced machining technicians. The practice identifies an early
+    spindle-bearing failure risk from a combination of vibration frequency,
+    sound changes, tool marks, and recent maintenance history.
+  first_observed_at: "2018-04-01T00:00:00+09:00"
+
+  contributors:
+    - contributor_id: employee_technician_042
+      contributor_type: human
+      display_name: null
+      role: Senior machining technician
+      contribution_type: originator
+      contribution_description: >
+        Identified the recurring relationship between vibration changes,
+        cutting-surface patterns, and later spindle-bearing failures.
+      attribution_mode: pseudonymous
+      consent_status: confirmed
+
+    - contributor_id: team_predictive-maintenance
+      contributor_type: team
+      display_name: Predictive Maintenance Team
+      role: Maintenance analysis team
+      contribution_type: reviewer
+      contribution_description: >
+        Compared the technician's observations with historical maintenance
+        records and vibration measurements.
+      attribution_mode: named
+      consent_status: not_required
+
+  origin_tags:
+    - machining
+    - predictive-maintenance
+    - vibration-analysis
+    - tacit-knowledge
+    - spindle-bearing
+
+capture_context:
+  capture_id: capture_spindle-vibration-001
+  captured_at: "2026-07-10T14:00:00+09:00"
+
+  captured_by:
+    actor_id: knowledge-engineering-team
+    actor_type: team
+    display_name: Enterprise Knowledge Engineering Team
+
+  capture_methods:
+    - interview
+    - direct_observation
+    - document_extraction
+    - agent_assisted_capture
+
+  purpose: >
+    Preserve the origin and operational boundaries of the diagnostic
+    practice before converting it into an AI-agent skill for predictive
+    maintenance support.
+
+  limitations:
+    - >
+      The practice was developed primarily for spindle models used in
+      Plant A and has not been fully tested on other equipment families.
+    - >
+      Diagnosis depends partly on contextual signals that may not be
+      represented in vibration sensor data alone.
+    - >
+      The practice must not be treated as a replacement for an authorized
+      mechanical inspection.
+
+  capture_environment: >
+    Knowledge was captured during a structured interview, shop-floor
+    observation, and review of historical maintenance records.
+
+knowledge_summary:
+  abstract: >
+    When a specific high-frequency vibration increase appears together
+    with irregular cutting marks and a recent lubrication anomaly, the
+    spindle should be flagged for an accelerated mechanical inspection.
+
+  operational_scope:
+    - CNC machining centers operated at Plant A
+    - Predictive maintenance triage
+    - Internal technician training
+    - Maintenance scheduling support
+
+  decision_contexts:
+    - Detecting possible spindle-bearing degradation
+    - Prioritizing inspection requests
+    - Reviewing abnormal vibration alerts
+    - Comparing sensor alerts with technician observations
+
+  known_limitations:
+    - The rule is not validated for all spindle manufacturers.
+    - False positives may occur after tool replacement.
+    - Sensor calibration errors can distort vibration patterns.
+    - Final shutdown decisions require human authorization.
+
+  excluded_uses:
+    - Fully autonomous shutdown of production equipment
+    - External sale of the diagnostic method
+    - Employee performance evaluation
+    - Safety certification without engineering review
+
+  confidence: high
+
+provenance:
+  evidence:
+    - evidence_id: evidence_interview-001
+      evidence_type: interview_record
+      reference: internal://knowledge-capture/interviews/spindle-2026-07-10
+      collected_at: "2026-07-10T14:00:00+09:00"
+      verification_status: verified
+      verification_notes: >
+        Interview transcript reviewed and approved by the contributing
+        technician.
+
+    - evidence_id: evidence_maintenance-log-001
+      evidence_type: system_log
+      reference: internal://maintenance/history/spindle-failures-2018-2026
+      collected_at: "2026-07-11T10:00:00+09:00"
+      verification_status: partially_verified
+      verification_notes: >
+        Historical records support the pattern, but several older incidents
+        contain incomplete sensor data.
+
+    - evidence_id: evidence_vibration-report-001
+      evidence_type: measurement
+      reference: internal://engineering/vibration-analysis/report-2026-0712
+      collected_at: "2026-07-12T16:30:00+09:00"
+      verification_status: verified
+      verification_notes: >
+        Engineering review confirmed that the vibration features are
+        technically plausible indicators of bearing degradation.
+
+  prior_origin_ids: []
+
+  integrity:
+    algorithm: sha256
+    digest: "94f0db57e29ce06708b4863d78ef84f9e02f3784af367ba901ba0d3b3e45a211"
+    signed_by: enterprise-knowledge-ledger-service
+
+rights_and_permissions:
+  steward:
+    actor_id: maintenance-knowledge-steward
+    actor_type: human
+    display_name: Maintenance Knowledge Steward
+
+  usage_scope: internal_only
+  attribution_required: true
+  human_review_required: true
+
+  permitted_uses:
+    - Internal predictive maintenance support
+    - AI-assisted inspection prioritization
+    - Internal training
+    - Maintenance-process improvement
+    - Controlled AI-agent evaluation
+
+  prohibited_uses:
+    - External publication without approval
+    - Fully autonomous equipment shutdown
+    - Use outside the validated equipment scope
+    - Removal of contributor attribution records
+    - Model training outside the approved enterprise environment
+
+  retention_policy: >
+    Retain while the knowledge remains operationally active and for seven
+    years after retirement for audit and attribution purposes.
+
+  license_reference: internal://policies/enterprise-knowledge-use-policy-v1
+
+governance_flags:
+  contains_personal_data: true
+  contains_sensitive_business_information: true
+  safety_critical: true
+  regulatory_impact: false
+  automated_execution_allowed: false
+
+  required_controls:
+    - Pseudonymize individual contributor identity in normal agent outputs.
+    - Require maintenance engineer review before operational action.
+    - Record every downstream agent skill derived from this origin.
+    - Suspend use when the supporting equipment configuration changes.
+    - Preserve contributor attribution in the internal audit ledger.
+
+lifecycle:
+  status: approved
+  effective_from: "2026-07-16T00:00:00+09:00"
+  expires_at: "2027-07-16T00:00:00+09:00"
+  superseded_by: null
+
+  review:
+    status: accepted
+    reviewer:
+      actor_id: reviewer_maintenance-engineering
+      actor_type: team
+      display_name: Maintenance Engineering Review Board
+    reviewed_at: "2026-07-15T16:00:00+09:00"
+    notes: >
+      Approved for controlled use in predictive maintenance support.
+      Autonomous execution remains prohibited.
+
+annotations:
+  - annotation_id: annotation_scope-warning-001
+    created_at: "2026-07-15T16:05:00+09:00"
+    created_by:
+      actor_id: reviewer_maintenance-engineering
+      actor_type: team
+      display_name: Maintenance Engineering Review Board
+    text: >
+      Revalidation is required before this knowledge is applied to spindle
+      models not represented in the current evidence set.
