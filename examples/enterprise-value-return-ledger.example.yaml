@@ -1,0 +1,518 @@
+schema_version: "0.5.0"
+record_type: enterprise_value_return_ledger
+ledger_id: evrl_spindle-anomaly-20260716-001
+created_at: "2026-07-16T16:30:00+09:00"
+
+value_case:
+  organization_id: org_kazene-manufacturing
+  case_id: valuecase_spindle-anomaly-a17-001
+  title: Verified value return for spindle anomaly intervention
+  period:
+    start_at: "2026-07-16T10:00:00+09:00"
+    end_at: "2026-07-16T16:00:00+09:00"
+  outcome_scope:
+    - Avoided unplanned spindle downtime through controlled inspection timing.
+    - Prevented release of a potentially affected production lot.
+    - Preserved human approval and knowledge-origin attribution throughout the workflow.
+  currency: JPY
+  valuation_status: verified
+  valuation_boundary: >
+    Only directly evidenced cost avoidance and quality containment effects are
+    included. Speculative reputation, future revenue, and generalized learning
+    effects are excluded from the monetary valuation.
+
+lineage:
+  origin_record_id: ekor_spindle-vibration-001
+  skill_binding_id: kasb_spindle-diagnosis-001
+  execution_trace_ids:
+    - cdet_spindle-anomaly-20260716-001
+  attribution_record:
+    attribution_id: hca_spindle-anomaly-20260716-002
+    schema_version: "0.4.0"
+    status: approved
+    allocation_readiness: ready
+    integrity:
+      algorithm: sha256
+      digest: 91fe2f96ebfcf3d6ef3123373a46bf66fca88855da4fd48612af36ebf63fd405
+      signed_by: enterprise-contribution-attribution-service
+  outcome_references:
+    - internal://maintenance/inspection-result/spindle-a17-001
+    - internal://quality/lot-disposition/lot-20260716-L3-04
+    - internal://finance/value-verification/spindle-a17-001
+
+value_verification:
+  methodology_id: valuation_verified-operational-effect-v1
+  methodology_version: "1.0.0"
+
+  components:
+    - component_id: vcomponent_avoided-downtime-001
+      effect_type: cost_avoidance
+      description: >
+        Avoided emergency spindle failure and unplanned production downtime by
+        performing inspection and bearing replacement at the next controlled
+        production transition.
+      value:
+        currency: JPY
+        amount: 1000000
+      verification_status: verified
+      inclusion_status: included
+      measurement_method: >
+        Comparison of the approved maintenance event with the standard cost of
+        an unplanned spindle failure, including emergency labor, lost machine
+        hours, and expedited replacement logistics.
+      evidence_references:
+        - internal://finance/cost-model/unplanned-spindle-failure-v3
+        - internal://maintenance/inspection-result/spindle-a17-001
+        - internal://production/machine-hours/spindle-a17-20260716
+      exclusion_reason: null
+
+    - component_id: vcomponent_quality-containment-001
+      effect_type: quality_improvement
+      description: >
+        Avoided downstream inspection, rework, and customer-return exposure by
+        holding and verifying the affected production lot before release.
+      value:
+        currency: JPY
+        amount: 250000
+      verification_status: verified
+      inclusion_status: included
+      measurement_method: >
+        Confirmed cost of the contained lot compared with the documented
+        reinspection and rework cost that would have occurred after release.
+      evidence_references:
+        - internal://quality/lot-disposition/lot-20260716-L3-04
+        - internal://finance/cost-model/quality-escape-v2
+      exclusion_reason: null
+
+    - component_id: vcomponent_reputation-protection-001
+      effect_type: risk_reduction
+      description: >
+        Possible reduction in future customer trust or reputation damage from a
+        quality escape.
+      value:
+        currency: JPY
+        amount: 500000
+      verification_status: estimated
+      inclusion_status: excluded
+      measurement_method: >
+        Scenario estimate based on historical customer-response patterns. The
+        effect was not directly observable in this case.
+      evidence_references:
+        - internal://risk/scenarios/quality-reputation-impact-v1
+      exclusion_reason: >
+        The effect is plausible but not directly verified and therefore cannot
+        enter the v0.5 return pool.
+
+  gross_verified_value:
+    currency: JPY
+    amount: 1250000
+
+  excluded_value:
+    currency: JPY
+    amount: 500000
+
+  verified_by:
+    - actor_id: enterprise-value-analysis-team
+      actor_type: human_team
+      display_name: Enterprise Value Analysis Team
+
+    - actor_id: finance-controller-manufacturing
+      actor_type: human
+      display_name: Manufacturing Finance Controller
+
+    - actor_id: quality-assurance-audit-team
+      actor_type: human_team
+      display_name: Quality Assurance Audit Team
+
+  verified_at: "2026-07-16T15:45:00+09:00"
+
+  evidence_references:
+    - internal://finance/value-verification/spindle-a17-001
+    - internal://maintenance/inspection-result/spindle-a17-001
+    - internal://quality/lot-disposition/lot-20260716-L3-04
+
+  confidence: verified
+  double_counting_check: passed
+
+  limitations:
+    - >
+      The valuation covers this specific spindle incident and must not be
+      generalized to every future agent recommendation.
+    - >
+      Long-term organizational learning is recognized separately as a
+      non-monetary effect and is not included in the verified amount.
+
+return_policy:
+  policy_id: returnpolicy_enterprise-origin-value-v1
+  policy_version: "1.0.0"
+  basis_type: percentage_of_verified_value
+  return_rate: 0.20
+
+  gross_return_pool:
+    currency: JPY
+    amount: 250000
+
+  minimum_pool: null
+  maximum_pool:
+    currency: JPY
+    amount: 500000
+
+  attribution_basis: confirmed_relative_weights
+
+  unattributed_destination:
+    actor_id: fund_shared-enterprise-knowledge
+    actor_type: fund
+    display_name: Shared Enterprise Knowledge Fund
+
+  holdback_rate: 0.05
+  allocation_precision: 0
+
+  policy_references:
+    - internal://policies/enterprise-value-return-policy-v1
+    - internal://policies/contribution-appeal-and-holdback-v1
+    - internal://policies/shared-knowledge-fund-v1
+
+  policy_notes: >
+    Twenty percent of verified enterprise value becomes the value-return pool.
+    Confirmed v0.4 attribution weights determine individual and team shares.
+    The unattributed share is returned to a shared knowledge fund rather than
+    assigned arbitrarily.
+
+eligibility:
+  snapshot_at: "2026-07-16T16:00:00+09:00"
+
+  rules:
+    - The contribution must be confirmed in the approved v0.4 attribution record.
+    - The contributor must not have an open material attribution dispute.
+    - Identity protection and consent restrictions must be preserved.
+    - The settlement route must comply with employment, payroll, tax, and procurement controls.
+    - Non-human agents and systems are not eligible for human-recipient allocation in this ledger.
+
+  decisions:
+    - contribution_id: contribution_technician-042
+      eligible: true
+      decision: eligible
+      reason: Confirmed origin contribution with no open dispute.
+      reviewed_by:
+        actor_id: value-return-eligibility-board
+        actor_type: human_team
+        display_name: Value Return Eligibility Board
+
+    - contribution_id: contribution_maintenance-engineer-118
+      eligible: true
+      decision: eligible
+      reason: Confirmed corrective and authorizing contribution with no open dispute.
+      reviewed_by:
+        actor_id: value-return-eligibility-board
+        actor_type: human_team
+        display_name: Value Return Eligibility Board
+
+    - contribution_id: contribution_qa-supervisor-031
+      eligible: true
+      decision: eligible
+      reason: Confirmed quality authorization and outcome-validation contribution.
+      reviewed_by:
+        actor_id: value-return-eligibility-board
+        actor_type: human_team
+        display_name: Value Return Eligibility Board
+
+    - contribution_id: contribution_knowledge-engineering-team
+      eligible: true
+      decision: eligible
+      reason: Confirmed knowledge-capture, transformation, and stewardship contribution.
+      reviewed_by:
+        actor_id: value-return-eligibility-board
+        actor_type: human_team
+        display_name: Value Return Eligibility Board
+
+    - contribution_id: contribution_predictive-maintenance-team
+      eligible: true
+      decision: eligible
+      reason: Confirmed evidence-corroboration and validation contribution.
+      reviewed_by:
+        actor_id: value-return-eligibility-board
+        actor_type: human_team
+        display_name: Value Return Eligibility Board
+
+recipient_allocations:
+  - allocation_id: allocation_technician-042-001
+    contribution_id: contribution_technician-042
+    recipient:
+      actor_id: employee_technician_042
+      actor_type: human
+      display_name: null
+    allocation_weight: 0.28
+    allocated_value:
+      currency: JPY
+      amount: 70000
+    immediate_value:
+      currency: JPY
+      amount: 66500
+    held_value:
+      currency: JPY
+      amount: 3500
+    hold_reason: >
+      Five-percent policy holdback retained until the appeal window closes and
+      the origin contributor confirms the protected settlement route.
+    settlement_route: bonus
+    settlement_status: authorized
+    scheduled_at: "2026-07-31T09:00:00+09:00"
+    settlement_reference: internal://payroll/value-return/technician-042-202607
+    notes: Contributor identity remains pseudonymous outside authorized payroll processing.
+
+  - allocation_id: allocation_maintenance-engineer-118-001
+    contribution_id: contribution_maintenance-engineer-118
+    recipient:
+      actor_id: maintenance-engineer-118
+      actor_type: human
+      display_name: Authorized Maintenance Engineer
+    allocation_weight: 0.27
+    allocated_value:
+      currency: JPY
+      amount: 67500
+    immediate_value:
+      currency: JPY
+      amount: 64125
+    held_value:
+      currency: JPY
+      amount: 3375
+    hold_reason: Five-percent policy holdback until the appeal window closes.
+    settlement_route: bonus
+    settlement_status: authorized
+    scheduled_at: "2026-07-31T09:00:00+09:00"
+    settlement_reference: internal://payroll/value-return/maintenance-engineer-118-202607
+    notes: null
+
+  - allocation_id: allocation_qa-supervisor-031-001
+    contribution_id: contribution_qa-supervisor-031
+    recipient:
+      actor_id: qa-supervisor-031
+      actor_type: human
+      display_name: Quality Assurance Supervisor
+    allocation_weight: 0.16
+    allocated_value:
+      currency: JPY
+      amount: 40000
+    immediate_value:
+      currency: JPY
+      amount: 38000
+    held_value:
+      currency: JPY
+      amount: 2000
+    hold_reason: Five-percent policy holdback until the appeal window closes.
+    settlement_route: bonus
+    settlement_status: authorized
+    scheduled_at: "2026-07-31T09:00:00+09:00"
+    settlement_reference: internal://payroll/value-return/qa-supervisor-031-202607
+    notes: null
+
+  - allocation_id: allocation_knowledge-engineering-team-001
+    contribution_id: contribution_knowledge-engineering-team
+    recipient:
+      actor_id: knowledge-engineering-team
+      actor_type: human_team
+      display_name: Enterprise Knowledge Engineering Team
+    allocation_weight: 0.13
+    allocated_value:
+      currency: JPY
+      amount: 32500
+    immediate_value:
+      currency: JPY
+      amount: 30875
+    held_value:
+      currency: JPY
+      amount: 1625
+    hold_reason: Five-percent policy holdback until the appeal window closes.
+    settlement_route: team_budget
+    settlement_status: authorized
+    scheduled_at: "2026-07-31T09:00:00+09:00"
+    settlement_reference: internal://budget/value-return/knowledge-engineering-202607
+    notes: >
+      The team allocation must be used for knowledge-capture tooling, contributor
+      protection, or approved stewardship work.
+
+  - allocation_id: allocation_predictive-maintenance-team-001
+    contribution_id: contribution_predictive-maintenance-team
+    recipient:
+      actor_id: team_predictive-maintenance
+      actor_type: human_team
+      display_name: Predictive Maintenance Team
+    allocation_weight: 0.08
+    allocated_value:
+      currency: JPY
+      amount: 20000
+    immediate_value:
+      currency: JPY
+      amount: 19000
+    held_value:
+      currency: JPY
+      amount: 1000
+    hold_reason: Five-percent policy holdback until the appeal window closes.
+    settlement_route: team_budget
+    settlement_status: authorized
+    scheduled_at: "2026-07-31T09:00:00+09:00"
+    settlement_reference: internal://budget/value-return/predictive-maintenance-202607
+    notes: null
+
+collective_allocations:
+  - allocation_id: collective_unattributed-knowledge-001
+    allocation_type: unattributed_share
+    destination:
+      actor_id: fund_shared-enterprise-knowledge
+      actor_type: fund
+      display_name: Shared Enterprise Knowledge Fund
+    allocation_weight: 0.08
+    allocated_value:
+      currency: JPY
+      amount: 20000
+    immediate_value:
+      currency: JPY
+      amount: 20000
+    held_value:
+      currency: JPY
+      amount: 0
+    purpose: >
+      Preserve the value of undocumented collective practice, shared
+      infrastructure, and historical organizational contribution that could not
+      be fairly assigned to an individual contributor.
+    settlement_status: authorized
+    settlement_reference: internal://fund/shared-enterprise-knowledge/20260716-001
+
+non_monetary_returns:
+  - return_id: nonmonetary_origin-recognition-001
+    contribution_id: contribution_technician-042
+    beneficiary:
+      actor_id: employee_technician_042
+      actor_type: human
+      display_name: null
+    return_type: recognition
+    description: >
+      Permanent internal origin credit attached to the diagnostic knowledge,
+      downstream skill, and future derivative records.
+    unit: recognition_record
+    quantity: 1
+    monetary_equivalent_in_ledger: false
+    status: approved
+
+  - return_id: nonmonetary_protected-development-time-001
+    contribution_id: contribution_technician-042
+    beneficiary:
+      actor_id: employee_technician_042
+      actor_type: human
+      display_name: null
+    return_type: protected_time
+    description: >
+      Protected work time to document additional diagnostic knowledge and review
+      later derivatives without production-output penalty.
+    unit: hour
+    quantity: 16
+    monetary_equivalent_in_ledger: false
+    status: scheduled
+
+  - return_id: nonmonetary_governance-seat-001
+    contribution_id: contribution_knowledge-engineering-team
+    beneficiary:
+      actor_id: knowledge-engineering-team
+      actor_type: human_team
+      display_name: Enterprise Knowledge Engineering Team
+    return_type: governance_participation
+    description: >
+      One rotating seat in the quarterly enterprise-agent origin and value-return review.
+    unit: governance_seat
+    quantity: 1
+    monetary_equivalent_in_ledger: false
+    status: approved
+
+settlement_summary:
+  currency: JPY
+  total_pool: 250000
+  total_recipient_allocations: 230000
+  total_collective_allocations: 20000
+  total_immediate: 238500
+  total_held: 11500
+  total_settled: 0
+  total_unallocated: 0
+  balance_status: balanced
+  settlement_ready: false
+  readiness_conditions:
+    - The contributor appeal window must close without an unresolved material appeal.
+    - Payroll, tax, and team-budget routes must confirm recipient eligibility.
+    - Pseudonymous identity mapping must remain restricted to authorized settlement personnel.
+    - Holdback release requires final ledger integrity verification.
+
+governance:
+  review_required: true
+  review_status: accepted
+
+  reviewers:
+    - actor_id: enterprise-value-return-board
+      actor_type: human_team
+      display_name: Enterprise Value Return Board
+
+    - actor_id: finance-controller-manufacturing
+      actor_type: human
+      display_name: Manufacturing Finance Controller
+
+    - actor_id: worker-representation-reviewer
+      actor_type: human
+      display_name: Worker Representation Reviewer
+
+    - actor_id: privacy-and-identity-review-team
+      actor_type: human_team
+      display_name: Privacy and Identity Review Team
+
+  contributor_notice_status: delivered
+  appeal_available: true
+  appeal_window_ends_at: "2026-07-30T17:00:00+09:00"
+  appeals: []
+
+  tax_and_employment_boundary: >
+    This ledger authorizes a value-return basis but does not override payroll,
+    tax, employment, procurement, or collective-agreement requirements. Each
+    settlement route requires processing under the applicable enterprise rules.
+
+  privacy_and_identity_controls: >
+    Pseudonymous contributor identity is revealed only to personnel required to
+    execute the approved settlement. Routine agent, analytics, and reporting
+    systems receive the contribution ID rather than the legal identity.
+
+  prohibited_uses:
+    - Treating the allocated amount as a complete measure of an employee's value.
+    - Reducing ordinary salary, benefits, or negotiated compensation because a value return exists.
+    - Assigning excluded speculative value to recipients.
+    - Paying an AI agent or system from the human-recipient allocation pool.
+    - Reassigning the unattributed share to a visible executive or final approver.
+    - Settling funds while a material appeal remains unresolved.
+    - Removing origin attribution after monetary settlement.
+
+  reviewed_at: "2026-07-16T16:20:00+09:00"
+  review_notes: >
+    Allocation is accepted and balanced. Settlement remains scheduled rather
+    than completed until the appeal period and administrative checks close.
+
+integrity:
+  algorithm: sha256
+  digest: 0980a54a65eef12d94d2dca3821a85cb6b474dd5676c9b46f93462825125f57c
+  signed_by: enterprise-value-return-ledger-service
+
+lifecycle:
+  status: authorized
+  effective_from: "2026-07-16T16:20:00+09:00"
+  closed_at: null
+  retention_policy: >
+    Retain the ledger, attribution basis, value evidence, settlement receipts,
+    appeals, identity-access logs, and superseding records for at least seven
+    years after final settlement.
+  superseded_by: null
+  void_reason: null
+
+annotations:
+  - annotation_id: annotation_holdback-release-001
+    created_at: "2026-07-16T16:25:00+09:00"
+    created_by:
+      actor_id: enterprise-value-return-board
+      actor_type: human_team
+      display_name: Enterprise Value Return Board
+    text: >
+      The JPY 11,500 holdback may be released only after the appeal window
+      closes and the scheduled settlement routes remain valid.
